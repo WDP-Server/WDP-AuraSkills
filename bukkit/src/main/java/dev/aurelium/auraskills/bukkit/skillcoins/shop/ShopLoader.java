@@ -6,6 +6,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.Registry;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -180,7 +181,7 @@ public class ShopLoader {
                         int level = Integer.parseInt(parts[1].trim());
                         
                         // Try to get enchantment by name
-                        Enchantment enchant = Enchantment.getByKey(NamespacedKey.minecraft(enchantName.toLowerCase()));
+                        Enchantment enchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchantName.toLowerCase()));
                         if (enchant != null) {
                             enchantments.put(enchant, level);
                         } else {

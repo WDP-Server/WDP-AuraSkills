@@ -6,6 +6,7 @@ import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.common.skillcoins.CurrencyType;
 import dev.aurelium.auraskills.common.skillcoins.EconomyProvider;
 import dev.aurelium.auraskills.common.user.User;
+import dev.aurelium.auraskills.bukkit.skillcoins.menu.SharedNavbarManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -31,6 +32,7 @@ public class SkillLevelPurchaseMenu {
     
     private final AuraSkills plugin;
     private final EconomyProvider economy;
+    private final SharedNavbarManager navbarManager;
     
     private static final String SELECTION_TITLE = ChatColor.of("#00FFFF") + "✪ " + ChatColor.of("#FFFFFF") + "Select Skill";
     private static final String QUICK_SELECT_TITLE = ChatColor.of("#FFFF00") + "⚡ " + ChatColor.of("#FFFFFF") + "Quick Select";
@@ -49,6 +51,7 @@ public class SkillLevelPurchaseMenu {
         if (economy == null) throw new IllegalArgumentException("Economy cannot be null");
         this.plugin = plugin;
         this.economy = economy;
+        this.navbarManager = new SharedNavbarManager(plugin, economy);
     }
     
     public void open(Player player) {
@@ -166,31 +169,8 @@ public class SkillLevelPurchaseMenu {
                 inv.setItem(skillSlots[slotIndex++], skillItem);
             }
             
-            // Back button (slot 48) - Arrow style for back
-            ItemStack back = new ItemStack(Material.ARROW);
-            ItemMeta backMeta = back.getItemMeta();
-            if (backMeta != null) {
-                backMeta.setDisplayName(ChatColor.of("#55FF55") + "← Back");
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.of("#808080") + "Return to main shop");
-                backMeta.setLore(lore);
-                back.setItemMeta(backMeta);
-            }
-            inv.setItem(48, back);
-            
-            // Back button (slot 53) - use arrow to return to main shop
-            ItemStack close = new ItemStack(Material.ARROW);
-            ItemMeta closeMeta = close.getItemMeta();
-            if (closeMeta != null) {
-                closeMeta.setDisplayName(ChatColor.of("#55FF55") + "← Back");
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.of("#808080") + "Return to main shop");
-                closeMeta.setLore(lore);
-                close.setItemMeta(closeMeta);
-            }
-            inv.setItem(53, close);
+            // Add universal navbar
+            navbarManager.addNavbar(inv, "skill_select", 0, 0, player);
             
             player.openInventory(inv);
         } catch (Exception e) {

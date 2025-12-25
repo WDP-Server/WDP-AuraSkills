@@ -22,11 +22,9 @@ public class PayCommand extends BaseCommand {
     private static final double MIN_PAYMENT = 1.0;
     private static final double MAX_PAYMENT = 1000000.0;
     
-    private final AuraSkills plugin;
     private final EconomyProvider economy;
     
     public PayCommand(AuraSkills plugin) {
-        this.plugin = plugin;
         this.economy = plugin.getSkillCoinsEconomy();
     }
     

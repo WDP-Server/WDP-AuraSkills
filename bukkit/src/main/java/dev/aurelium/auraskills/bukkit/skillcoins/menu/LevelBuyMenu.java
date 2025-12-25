@@ -2,10 +2,10 @@ package dev.aurelium.auraskills.bukkit.skillcoins.menu;
 
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.auraskills.bukkit.AuraSkills;
-import dev.aurelium.auraskills.bukkit.skillcoins.TokenRewardListener;
 import dev.aurelium.auraskills.common.skillcoins.CurrencyType;
 import dev.aurelium.auraskills.common.skillcoins.EconomyProvider;
 import dev.aurelium.auraskills.common.user.User;
+import dev.aurelium.auraskills.bukkit.skillcoins.menu.SharedNavbarManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -31,6 +31,7 @@ public class LevelBuyMenu {
     
     private final AuraSkills plugin;
     private final EconomyProvider economy;
+    private final SharedNavbarManager navbarManager;
     
     // The track positions (same as level_progression.yml)
     private static final int[] TRACK = {9, 18, 27, 36, 37, 38, 29, 20, 11, 12, 13, 22, 31, 40, 41, 42, 33, 24, 15, 16, 17, 26, 35, 44};
@@ -51,6 +52,7 @@ public class LevelBuyMenu {
         if (economy == null) throw new IllegalArgumentException("Economy cannot be null");
         this.plugin = plugin;
         this.economy = economy;
+        this.navbarManager = new SharedNavbarManager(plugin, economy);
     }
     
     /**
@@ -177,8 +179,9 @@ public class LevelBuyMenu {
             // Add level track items
             addLevelTrack(inv, skill, currentLevel, maxLevel, selectedLevel, page);
             
-            // Add navigation
-            addNavigation(inv, page, maxLevel);
+            // Add universal navbar
+            int maxPage = (maxLevel - 1) / ITEMS_PER_PAGE;
+            navbarManager.addNavbar(inv, "level_buy", page, maxPage, player);
             
             if (isNewInventory) {
                 player.openInventory(inv);
@@ -188,11 +191,6 @@ public class LevelBuyMenu {
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error updating level buy inventory", e);
         }
-    }
-    
-    private void fillBackground(Inventory inv) {
-        // Intentionally left blank — do not fill with black glass to avoid clutter
-        if (inv == null) return;
     }
     
     private void addTopControls(Inventory inv, Player player, Skill skill, int currentLevel, int maxLevel, int selectedLevel) {
@@ -471,20 +469,11 @@ public class LevelBuyMenu {
                 }
                 break;
             // removed ±10 controls for cleaner single-step selection
-            case 45: // Back
-                player.closeInventory();
-                // Open shop main menu
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    ShopMainMenu shopMenu = new ShopMainMenu(plugin, economy);
-                    shopMenu.open(player);
-                });
+            case 45: // Balance display (navbar) - no action
                 break;
-            case 46: // Close
-                player.closeInventory();
-                // Also open main shop menu (slot 46 acts as Close)
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    new ShopMainMenu(plugin, economy).open(player);
-                });
+            case 46: // Glass pane (navbar) - no action
+                break;
+            case 47: // Glass pane (navbar) - no action
                 break;
             case 48: // Previous page
                 if (page > 0) {
@@ -493,6 +482,8 @@ public class LevelBuyMenu {
                     updateTask = () -> updateInventory(player);
                 }
                 break;
+            case 49: // Page info (navbar) - no action
+                break;
             case 50: // Next page
                 int maxPage = (maxLevel - 1) / ITEMS_PER_PAGE;
                 if (page < maxPage) {
@@ -500,6 +491,18 @@ public class LevelBuyMenu {
                     player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
                     updateTask = () -> updateInventory(player);
                 }
+                break;
+            case 51: // Glass pane (navbar) - no action
+                break;
+            case 52: // Glass pane (navbar) - no action
+                break;
+            case 53: // Back (navbar)
+                player.closeInventory();
+                // Open shop main menu
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    ShopMainMenu shopMenu = new ShopMainMenu(plugin, economy);
+                    shopMenu.open(player);
+                });
                 break;
         }
 

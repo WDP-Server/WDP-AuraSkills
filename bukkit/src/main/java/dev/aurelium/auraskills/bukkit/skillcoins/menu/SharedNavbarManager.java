@@ -7,9 +7,7 @@ import dev.aurelium.auraskills.common.message.MessageKey;
 import dev.aurelium.auraskills.common.user.User;
 import dev.aurelium.auraskills.common.util.text.Replacer;
 import dev.aurelium.auraskills.common.util.text.TextUtil;
-import dev.aurelium.slate.menu.ActiveMenu;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -191,7 +189,7 @@ public class SharedNavbarManager {
     }
     
     private String applyMenuPlaceholders(String text, Player player, String menuName, Replacer replacer) {
-        // First replace data placeholders
+        // First replace data placeholders in the original text
         text = TextUtil.replace(text, replacer);
         
         // Then replace menu message placeholders
@@ -201,16 +199,28 @@ public class SharedNavbarManager {
                 MessageKey messageKey = MessageKey.of("menus.navbar." + placeholder);
                 MessageKey commonKey = MessageKey.of("menus.common." + placeholder);
                 
-                String message = plugin.getMessageProvider().getRaw(messageKey, plugin.getUser(player).getLocale());
+                // Get locale - use player's locale if available, otherwise use default
+                java.util.Locale locale;
+                if (player != null) {
+                    locale = plugin.getUser(player).getLocale();
+                } else {
+                    locale = plugin.getMessageProvider().getDefaultLanguage();
+                }
+                
+                String message = plugin.getMessageProvider().getRaw(messageKey, locale);
                 if (message.equals(messageKey.getPath())) { // Key not found, try common
-                    message = plugin.getMessageProvider().getRaw(commonKey, plugin.getUser(player).getLocale());
+                    message = plugin.getMessageProvider().getRaw(commonKey, locale);
                 }
                 
                 if (!message.equals(commonKey.getPath())) { // Found a valid message
+                    // Replace the {{placeholder}} with the message
                     text = text.replace("{{" + placeholder + "}}", message);
                 }
             }
         }
+        
+        // Finally, apply the replacer again to handle any data placeholders that were in the messages
+        text = TextUtil.replace(text, replacer);
         
         return text;
     }

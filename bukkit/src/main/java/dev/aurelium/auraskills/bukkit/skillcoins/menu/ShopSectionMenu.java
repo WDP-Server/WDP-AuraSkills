@@ -3,7 +3,6 @@ package dev.aurelium.auraskills.bukkit.skillcoins.menu;
 import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.bukkit.skillcoins.shop.ShopItem;
 import dev.aurelium.auraskills.bukkit.skillcoins.shop.ShopSection;
-import dev.aurelium.auraskills.common.skillcoins.CurrencyType;
 import dev.aurelium.auraskills.common.skillcoins.EconomyProvider;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -185,14 +184,6 @@ public class ShopSectionMenu {
             int startIndex = page * ITEMS_PER_PAGE;
             int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, allItems.size());
             
-            // Get player balance safely
-            double coins = 0.0;
-            try {
-                coins = economy.getBalance(player.getUniqueId(), CurrencyType.COINS);
-            } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING, "Error getting balance for " + player.getName(), e);
-            }
-            
             // Fill border first
             fillBorder(inv);
             
@@ -221,14 +212,6 @@ public class ShopSectionMenu {
             int maxPage = (allItems.size() - 1) / ITEMS_PER_PAGE;
             int startIndex = page * ITEMS_PER_PAGE;
             int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, allItems.size());
-            
-            // Get player balance safely
-            double coins = 0.0;
-            try {
-                coins = economy.getBalance(player.getUniqueId(), CurrencyType.COINS);
-            } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING, "Error getting balance for " + player.getName(), e);
-            }
             
             // Fill border first
             fillBorder(inv);
@@ -353,140 +336,6 @@ public class ShopSectionMenu {
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error creating item display", e);
             return null;
-        }
-    }
-    
-    /**
-     * Add page info display - slot 45
-     */
-    private void addPageInfo(Inventory inv, int page, int maxPage, int startIndex, int endIndex, int totalItems) {
-        if (inv == null) return;
-        
-        try {
-            ItemStack pageInfo = new ItemStack(Material.BOOK);
-            ItemMeta meta = pageInfo.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName(ChatColor.of("#00FFFF") + "Page " + (page + 1) + " of " + (maxPage + 1));
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.of("#808080") + "Showing items " + 
-                        ChatColor.of("#FFFFFF") + (startIndex + 1) + "-" + endIndex + 
-                        ChatColor.of("#808080") + " of " + ChatColor.of("#FFFFFF") + totalItems);
-                meta.setLore(lore);
-                pageInfo.setItemMeta(meta);
-            }
-            inv.setItem(45, pageInfo);
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error adding page info", e);
-        }
-    }
-    
-    /**
-     * Add balance display - slot 46
-     */
-    private void addBalanceDisplay(Inventory inv, double coins) {
-        if (inv == null) return;
-        
-        try {
-            ItemStack balanceItem = new ItemStack(Material.GOLD_NUGGET);
-            ItemMeta meta = balanceItem.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName(ChatColor.of("#FFFF00") + "Your Coins: " + 
-                        ChatColor.of("#FFFFFF") + MONEY_FORMAT.format(coins));
-                balanceItem.setItemMeta(meta);
-            }
-            inv.setItem(46, balanceItem);
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error adding balance", e);
-        }
-    }
-    
-    /**
-     * Add navigation buttons - updated layout
-     */
-    private void addNavigationButtons(Inventory inv, int page, int maxPage) {
-        if (inv == null) return;
-        
-        try {
-            // Previous page button (slot 48) - only when you can go back
-            if (page > 0) {
-                ItemStack prevPage = new ItemStack(Material.ARROW);
-                ItemMeta meta = prevPage.getItemMeta();
-                if (meta != null) {
-                    meta.setDisplayName(ChatColor.of("#FFFF00") + "← Previous Page");
-                    List<String> lore = new ArrayList<>();
-                    lore.add("");
-                    lore.add(ChatColor.of("#808080") + "Go to page " + ChatColor.of("#FFFFFF") + page);
-                    meta.setLore(lore);
-                    prevPage.setItemMeta(meta);
-                }
-                inv.setItem(48, prevPage);
-            }
-            // If no previous page, slot 48 remains black glass
-            
-            // Next page button (slot 50) - yellow text only
-            if (page < maxPage) {
-                ItemStack nextPage = new ItemStack(Material.ARROW);
-                ItemMeta meta = nextPage.getItemMeta();
-                if (meta != null) {
-                    meta.setDisplayName(ChatColor.of("#FFFF00") + "Next Page →");
-                    List<String> lore = new ArrayList<>();
-                    lore.add("");
-                    lore.add(ChatColor.of("#808080") + "Go to page " + ChatColor.of("#FFFFFF") + (page + 2));
-                    meta.setLore(lore);
-                    nextPage.setItemMeta(meta);
-                }
-                inv.setItem(50, nextPage);
-            }
-            // If no next page, slot 50 remains black glass
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error adding navigation buttons", e);
-        }
-    }
-    
-    /**
-     * Add back button - slot 53
-     */
-    private void addBackButton(Inventory inv) {
-        if (inv == null) return;
-        
-        try {
-            ItemStack back = new ItemStack(Material.ARROW);
-            ItemMeta meta = back.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName(ChatColor.of("#FF5555") + "← Back");
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.of("#808080") + "Return to main shop menu");
-                meta.setLore(lore);
-                back.setItemMeta(meta);
-            }
-            inv.setItem(53, back);
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error adding back button", e);
-        }
-    }
-    
-    /**
-     * Add close button - slot 53 (redundant with back button, keeping for compatibility)
-     */
-    private void addCloseButton(Inventory inv) {
-        if (inv == null) return;
-        
-        try {
-            ItemStack close = new ItemStack(Material.ARROW);
-            ItemMeta meta = close.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName(ChatColor.of("#55FF55") + "← Back");
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.of("#808080") + "Return to main shop menu");
-                meta.setLore(lore);
-                close.setItemMeta(meta);
-            }
-            inv.setItem(53, close);
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error adding close button", e);
         }
     }
     
