@@ -56,6 +56,13 @@ items:
     - component: job_active
     - component: job_limit
     - component: job_cooldown
+  buy:
+    pos: 0,5
+    material: emerald
+    display_name: '<gold>Buy Levels'
+    lore:
+    - ''
+    - '<yellow>Click to open the level buy menu for this skill'
   balance:
     pos: 5,0
     material: gold_nugget

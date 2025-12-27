@@ -88,7 +88,7 @@ public class SharedNavbarManager {
         if (meta != null) {
             meta.setDisplayName(ChatColor.GREEN + backText);
             List<String> lore = new ArrayList<>();
-            lore.add("");
+            lore.add(" ");
             lore.add(ChatColor.GRAY + "Return to main menu");
             meta.setLore(lore);
             back.setItemMeta(meta);
@@ -301,7 +301,7 @@ public class SharedNavbarManager {
 
         ItemStack prev;
 
-        if (page != 0) {
+        if (page == 0) {
             // If no previous page, create a disabled previous button
             prev = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
             ItemMeta meta = prev.getItemMeta();

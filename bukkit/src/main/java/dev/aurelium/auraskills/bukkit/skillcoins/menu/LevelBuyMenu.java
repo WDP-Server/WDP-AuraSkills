@@ -46,6 +46,29 @@ public class LevelBuyMenu {
     private final Map<UUID, Skill> selectedSkill = new ConcurrentHashMap<>();
     private final Map<UUID, Integer> selectedUpToLevel = new ConcurrentHashMap<>();  // Level they want to upgrade TO
     private final Map<UUID, Integer> currentPage = new ConcurrentHashMap<>();
+    // Track whether the player opened this menu from the level progression "road" menu
+    private final Map<UUID, Boolean> cameFromRoad = new ConcurrentHashMap<>();
+    // Track whether the player opened this menu from the shop's skill selection screen
+    private final Map<UUID, Boolean> cameFromSkillSelect = new ConcurrentHashMap<>();
+
+    /**
+     * Open the menu when initiated from the shop skill selection (so back returns there)
+     */
+    public void openFromSkillSelection(Player player, Skill skill) {
+        // Reuse open logic but mark as opened from skill selection
+        open(player, skill);
+        if (player != null) {
+            UUID uuid = player.getUniqueId();
+            cameFromSkillSelect.put(uuid, true);
+            // Ensure road flag is cleared when opened from skill selection
+            cameFromRoad.put(uuid, false);
+            MenuManager manager = MenuManager.getInstance(plugin);
+            if (manager != null) {
+                manager.setMenuOrigin(uuid, MenuManager.MenuOrigin.SKILL_SELECT);
+            }
+
+        }
+    }
     
     public LevelBuyMenu(AuraSkills plugin, EconomyProvider economy) {
         if (plugin == null) throw new IllegalArgumentException("Plugin cannot be null");
@@ -77,7 +100,16 @@ public class LevelBuyMenu {
             int currentLevel = user.getSkillLevel(skill);
             // Default selection is to buy 1 level
             selectedUpToLevel.put(uuid, currentLevel + 1);
-            
+            // Not opened from the level progression "road" by default
+            cameFromRoad.put(uuid, false);
+            // Not opened from skill-selection by default (clear previous state)
+            cameFromSkillSelect.put(uuid, false);
+
+            // Store a persistent default origin so back resolution is robust
+            if (manager != null) {
+                manager.setMenuOrigin(uuid, MenuManager.MenuOrigin.SKILL_SELECT);
+            }
+
             updateInventory(player);
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error opening level buy menu", e);
@@ -112,7 +144,15 @@ public class LevelBuyMenu {
             
             // Set selection to the clicked level (or current+1 if below current)
             selectedUpToLevel.put(uuid, Math.max(currentLevel + 1, clickedLevel));
-            
+            // Opened from the level progression "road"
+            cameFromRoad.put(uuid, true);
+            // Ensure skill selection flag is cleared when opening from road
+            cameFromSkillSelect.put(uuid, false);
+
+            if (manager != null) {
+                manager.setMenuOrigin(uuid, MenuManager.MenuOrigin.SKILL_ROAD);
+            }
+
             updateInventory(player);
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error opening level buy menu from click", e);
@@ -151,7 +191,21 @@ public class LevelBuyMenu {
             selectedUpToLevel.put(uuid, selectedLevel);
             
             String title = getMenuTitle(skill, page);
-            
+            // Append origin marker for reliable back destination detection (use persistent MenuManager origin)
+            MenuManager manager = MenuManager.getInstance(plugin);
+            MenuManager.MenuOrigin origin = MenuManager.MenuOrigin.SKILL_SELECT;
+            if (manager != null) {
+                origin = manager.getMenuOrigin(uuid).orElse(MenuManager.MenuOrigin.SKILL_SELECT);
+            }
+            String originMarker = "";
+            if (origin == MenuManager.MenuOrigin.SKILL_SELECT) {
+                originMarker = " [FROM:SKILL_SELECT]";
+            } else if (origin == MenuManager.MenuOrigin.SKILL_ROAD) {
+                originMarker = " [FROM:ROAD]";
+            } else {
+                originMarker = " [FROM:SHOP]";
+            }
+            title = title + originMarker;
             Inventory inv = null;
             boolean isNewInventory = false;
             
@@ -182,6 +236,33 @@ public class LevelBuyMenu {
             // Add universal navbar
             int maxPage = (maxLevel - 1) / ITEMS_PER_PAGE;
             navbarManager.addNavbar(inv, "level_buy", page, maxPage, player);
+            
+            // Override the back button visually to reflect where it will return to
+            try {
+                ItemStack backItem = new ItemStack(Material.ARROW);
+                ItemMeta backMeta = backItem.getItemMeta();
+                if (backMeta != null) {
+                    String displayName;
+                    List<String> lore = new ArrayList<>();
+                    lore.add("");
+                    if (origin == MenuManager.MenuOrigin.SKILL_SELECT) {
+                        displayName = ChatColor.of("#55FF55") + "← Back to Skills";
+                        lore.add(ChatColor.of("#808080") + "Return to the /skills menu");
+                    } else if (origin == MenuManager.MenuOrigin.SKILL_ROAD) {
+                        displayName = ChatColor.of("#55FF55") + "← Back to Skills";
+                        lore.add(ChatColor.of("#808080") + "Return to the main skills menu");
+                    } else {
+                        displayName = ChatColor.of("#55FF55") + "← Back to Shop";
+                        lore.add(ChatColor.of("#808080") + "Return to the SkillCoins shop");
+                    }
+                    backMeta.setDisplayName(displayName);
+                    backMeta.setLore(lore);
+                    backItem.setItemMeta(backMeta);
+                }
+                inv.setItem(53, backItem);
+            } catch (Exception e) {
+                plugin.getLogger().log(java.util.logging.Level.WARNING, "Failed to override back button display", e);
+            }
             
             if (isNewInventory) {
                 player.openInventory(inv);
@@ -277,21 +358,6 @@ public class LevelBuyMenu {
                 ChatColor.of("#55FF55") + "▲ +1 Level",
                 selectedLevel < maxLevel,
                 Arrays.asList("", ChatColor.GRAY + "Add 1 to selection"));
-        
-        // Slot 8: Balance Display
-        ItemStack balance = new ItemStack(Material.GOLD_NUGGET);
-        ItemMeta balanceMeta = balance.getItemMeta();
-        if (balanceMeta != null) {
-            balanceMeta.setDisplayName(ChatColor.of("#FFD700") + "⬥ Your 🎟");
-            List<String> lore = new ArrayList<>();
-            lore.add("");
-            lore.add(ChatColor.AQUA + "🎟: " + ChatColor.WHITE + MONEY_FORMAT.format(tokenBalance));
-            lore.add("");
-            lore.add(ChatColor.GRAY + "Cost per level: " + ChatColor.YELLOW + TOKENS_PER_LEVEL + " 🎟");
-            balanceMeta.setLore(lore);
-            balance.setItemMeta(balanceMeta);
-        }
-        inv.setItem(8, balance);
     }
     
     private void createControlButton(Inventory inv, int slot, Material material, String name, boolean enabled, List<String> lore) {
@@ -385,7 +451,7 @@ public class LevelBuyMenu {
 
         // Check for control buttons
         switch (slot) {
-            case 3: // -1 level
+            case 2: // -1 level
                 if (selectedLevel > currentLevel + 1) {
                     selectedUpToLevel.put(uuid, selectedLevel - 1);
                     player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
@@ -433,11 +499,75 @@ public class LevelBuyMenu {
             case 52: // Glass pane (navbar) - no action
                 break;
             case 53: // Back (navbar)
-                player.closeInventory();
-                // Open shop main menu
+                // First, consult persistent MenuManager origin if set
+                MenuManager manager = MenuManager.getInstance(plugin);
+                MenuManager.MenuOrigin origin = null;
+                if (manager != null) {
+                    origin = manager.getMenuOrigin(uuid).orElse(null);
+                }
+
+                // If no persistent origin, fallback to title/flags
+                boolean wasSkillSelect = false;
+                boolean wasFromRoad = false;
+                String currentTitle = "";
+                if (origin == null) {
+                    try {
+                        currentTitle = player.getOpenInventory().getTitle();
+                    } catch (Exception ignored) {}
+                    final boolean wasSkillSelect0 = currentTitle.contains("FROM:SKILL_SELECT");
+                    final boolean wasFromRoad0 = currentTitle.contains("FROM:ROAD");
+                    wasSkillSelect = (wasSkillSelect0 || cameFromSkillSelect.getOrDefault(uuid, false));
+                    wasFromRoad = (wasFromRoad0 || cameFromRoad.getOrDefault(uuid, false));
+                }
+
+
+
+                // Perform cleanup now because we won't rely on the close event to clear session
+                cleanupSession(player);
+
+                // Use the resolved source inside the scheduled task so clearing can't affect decision
+                final MenuManager.MenuOrigin finalOrigin = origin; // may be null
+                final boolean finalWasSkillSelect = wasSkillSelect;
+                final boolean finalWasFromRoad = wasFromRoad;
                 Bukkit.getScheduler().runTask(plugin, () -> {
-                    ShopMainMenu shopMenu = new ShopMainMenu(plugin, economy);
-                    shopMenu.open(player);
+                    try {
+                        if (finalOrigin != null) {
+                            switch (finalOrigin) {
+                                case SKILL_SELECT -> {
+                                    SkillLevelPurchaseMenu skillMenu = new SkillLevelPurchaseMenu(plugin, economy);
+                                    skillMenu.open(player);
+                                }
+                                case SKILL_ROAD -> {
+                                    try {
+                                        plugin.getSlate().openMenu(player, "skills", Map.of());
+                                    } catch (Exception e) {
+                                        new dev.aurelium.auraskills.bukkit.menus.util.LevelProgressionOpener(plugin).open(player, skill);
+                                    }
+                                }
+                                case SHOP_MAIN -> {
+                                    SkillLevelPurchaseMenu skillMenu = new SkillLevelPurchaseMenu(plugin, economy);
+                                    skillMenu.open(player);
+                                }
+                            }
+                        } else if (finalWasSkillSelect) {
+                            SkillLevelPurchaseMenu skillMenu = new SkillLevelPurchaseMenu(plugin, economy);
+                            skillMenu.open(player);
+                        } else if (finalWasFromRoad) {
+                            try {
+                                plugin.getSlate().openMenu(player, "skills", Map.of());
+                            } catch (Exception e) {
+                                new dev.aurelium.auraskills.bukkit.menus.util.LevelProgressionOpener(plugin).open(player, skill);
+                            }
+                        } else {
+                            SkillLevelPurchaseMenu skillMenu = new SkillLevelPurchaseMenu(plugin, economy);
+                            skillMenu.open(player);
+                        }
+                    } finally {
+                        // Clear the persistent origin after navigation attempt
+                        if (manager != null) {
+                            manager.clearMenuOrigin(uuid);
+                        }
+                    }
                 });
                 break;
         }
@@ -528,19 +658,28 @@ public class LevelBuyMenu {
         updateInventory(player);
     }
     
-    public void handleClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player)) return;
-        Player player = (Player) event.getPlayer();
+    private void cleanupSession(Player player) {
+        if (player == null || !player.isOnline()) return;
         UUID uuid = player.getUniqueId();
-        
+
+
+
         selectedSkill.remove(uuid);
         selectedUpToLevel.remove(uuid);
         currentPage.remove(uuid);
-        
+        cameFromRoad.remove(uuid);
+        cameFromSkillSelect.remove(uuid);
+
         MenuManager manager = MenuManager.getInstance(plugin);
         if (manager != null) {
             manager.unregisterLevelBuyMenu(player);
         }
+    }
+
+    public void handleClose(InventoryCloseEvent event) {
+        if (!(event.getPlayer() instanceof Player)) return;
+        Player player = (Player) event.getPlayer();
+        cleanupSession(player);
     }
     
     private Material getSkillIcon(Skill skill) {

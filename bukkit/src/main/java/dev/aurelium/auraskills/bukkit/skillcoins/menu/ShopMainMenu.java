@@ -135,9 +135,6 @@ public class ShopMainMenu {
             // Add shop sections with validation
             addShopSections(inv);
             
-            // Add Level Buy button at top (slot 4) - new feature
-            addLevelBuyButton(inv);
-            
             // Add close button (slot 53)
             addCloseButton(inv);
             
@@ -316,40 +313,6 @@ public class ShopMainMenu {
     }
     
     /**
-     * Add Level Buy button at slot 4 - allows purchasing skill levels with tokens
-     */
-    private void addLevelBuyButton(Inventory inv) {
-        if (inv == null) return;
-        
-        try {
-            ItemStack levelBuy = new ItemStack(Material.EXPERIENCE_BOTTLE);
-            ItemMeta meta = levelBuy.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName(ChatColor.GOLD + "✦ " + ChatColor.WHITE + "Buy Skill Levels");
-                
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.GRAY + "Purchase skill levels using");
-                lore.add(ChatColor.GRAY + "your 🎟!");
-                lore.add("");
-                lore.add(ChatColor.AQUA + "Cost: " + ChatColor.WHITE + "10 🎟 per level");
-                lore.add("");
-                lore.add(ChatColor.GRAY + "Select a skill and the levels");
-                lore.add(ChatColor.GRAY + "you want to purchase.");
-                lore.add("");
-                lore.add(ChatColor.YELLOW + "▸ Click to open!");
-                
-                meta.setLore(lore);
-                levelBuy.setItemMeta(meta);
-            }
-            
-            inv.setItem(4, levelBuy);
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error adding level buy button", e);
-        }
-    }
-    
-    /**
      * Add close button
      */
     private void addCloseButton(Inventory inv) {
@@ -425,12 +388,6 @@ public class ShopMainMenu {
                 return;
             }
             
-            // Handle Level Buy button (slot 4)
-            if (slot == 4 && clicked.getType() == Material.EXPERIENCE_BOTTLE) {
-                player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
-                openSkillSelectionForLevelBuy(player);
-                return;
-            }
             
             // Handle section clicks
             handleSectionClick(player, slot);
@@ -472,7 +429,8 @@ public class ShopMainMenu {
         skillSelectionPlayers.remove(player.getUniqueId());
         
         LevelBuyMenu levelBuyMenu = new LevelBuyMenu(plugin, economy);
-        levelBuyMenu.open(player, clickedSkill);
+        // Mark that the player came from skill-selection so the back button returns there
+        levelBuyMenu.openFromSkillSelection(player, clickedSkill);
     }
     
     /**
@@ -575,11 +533,11 @@ public class ShopMainMenu {
      */
     private void openSkillSelectionForLevelBuy(Player player) {
         if (player == null) return;
-        
+
         try {
             String skillSelectTitle = ChatColor.GOLD + "✦ " + ChatColor.WHITE + "Select Skill to Buy";
             Inventory inv = Bukkit.createInventory(null, 54, skillSelectTitle);
-            
+
             // Fill background with black glass
             ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
             ItemMeta fillerMeta = filler.getItemMeta();
@@ -590,28 +548,28 @@ public class ShopMainMenu {
             for (int i = 0; i < 54; i++) {
                 inv.setItem(i, filler);
             }
-            
+
             User user = plugin.getUser(player);
             if (user == null) return;
-            
+
             // Add skills in a layout matching the main /skills menu
             // First row: Archery, Fighting, Defense, Endurance
             // Second row: Farming, Foraging, Mining, Fishing, Excavation  
             // Third row: Agility, Alchemy, Enchanting, Sorcery, Healing, Forging
-            
+
             // First row (slots 9-17)
             addSkillToMenu(inv, Skills.ARCHERY, 10, user);
             addSkillToMenu(inv, Skills.FIGHTING, 11, user);
             addSkillToMenu(inv, Skills.DEFENSE, 12, user);
             addSkillToMenu(inv, Skills.ENDURANCE, 13, user);
-            
+
             // Second row (slots 18-26)
             addSkillToMenu(inv, Skills.FARMING, 19, user);
             addSkillToMenu(inv, Skills.FORAGING, 20, user);
             addSkillToMenu(inv, Skills.MINING, 21, user);
             addSkillToMenu(inv, Skills.FISHING, 22, user);
             addSkillToMenu(inv, Skills.EXCAVATION, 23, user);
-            
+
             // Third row (slots 27-35)
             addSkillToMenu(inv, Skills.AGILITY, 28, user);
             addSkillToMenu(inv, Skills.ALCHEMY, 29, user);
@@ -619,7 +577,7 @@ public class ShopMainMenu {
             addSkillToMenu(inv, Skills.SORCERY, 31, user);
             addSkillToMenu(inv, Skills.HEALING, 32, user);
             addSkillToMenu(inv, Skills.FORGING, 33, user);
-            
+
             // Close button (slot 53) - only close button, no back button in middle
             ItemStack close = new ItemStack(Material.BARRIER);
             ItemMeta closeMeta = close.getItemMeta();
@@ -628,15 +586,22 @@ public class ShopMainMenu {
                 close.setItemMeta(closeMeta);
             }
             inv.setItem(53, close);
-            
+
             // Store that we're in skill selection mode
             skillSelectionPlayers.add(player.getUniqueId());
-            
+
             player.openInventory(inv);
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error opening skill selection", e);
             player.sendMessage(ChatColor.RED + "✖ Error opening skill selection!");
         }
+    }
+
+    /**
+     * Public wrapper so other menus can reopen the skill selection for level buy
+     */
+    public void openSkillSelectionForLevelBuyPublic(Player player) {
+        openSkillSelectionForLevelBuy(player);
     }
     
     /**

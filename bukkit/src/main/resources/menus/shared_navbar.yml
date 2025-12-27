@@ -6,9 +6,8 @@ navbar:
   balance:
     slot: 45
     material: gold_nugget
-    display_name: '<gold>{{balance}}'
+    display_name: '<gold>Balance:'
     lore:
-    - ''
     - '<yellow><white>{coins} ⛃'
     - '<aqua><white>{tokens} 🎟'
     
@@ -36,10 +35,9 @@ navbar:
   page_info:
     slot: 49
     material: paper
-    display_name: '<aqua>{{page}}'
+    display_name: '<aqua>Pages'
     lore:
-    - ''
-    - '<gray>{{page_text}}: <white>{page}'
+    - '<gray>{{page_text}}: <white>{page} <gray>/ {total_pages}'
     
   next_page:
     slot: 50

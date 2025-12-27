@@ -6,6 +6,7 @@ import dev.aurelium.auraskills.api.mana.ManaAbilities;
 import dev.aurelium.auraskills.api.mana.ManaAbility;
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.auraskills.api.skill.Skills;
+import dev.aurelium.auraskills.bukkit.skillcoins.menu.LevelBuyMenu;
 import dev.aurelium.auraskills.api.util.NumberUtil;
 import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.bukkit.menus.shared.GlobalItems;
@@ -82,8 +83,21 @@ public class LevelProgressionMenu {
 
         var globalItems = new GlobalItems(plugin);
         menu.item("back", globalItems::back);
+        // Map the YAML 'back_close' id to the same back behavior so the back arrow works
+        menu.item("back_close", globalItems::back);
         menu.item("previous_page", globalItems::previousPage);
         menu.item("next_page", globalItems::nextPage);
+        // Buy button in the top bar (opens level buy menu for the current skill)
+        menu.item("buy", item -> {
+            item.onClick(c -> {
+                var skill = (Skill) c.menu().getProperty("skill");
+                if (skill == null || plugin.getSkillCoinsEconomy() == null) return;
+                var buyMenu = new dev.aurelium.auraskills.bukkit.skillcoins.menu.LevelBuyMenu(plugin, plugin.getSkillCoinsEconomy());
+                buyMenu.open(c.player(), skill);
+            });
+            // Hide buy button if SkillCoins economy isn't available
+            item.modify(i -> plugin.getSkillCoinsEconomy() == null ? null : i.item());
+        });
         menu.item("close", globalItems::close);
         menu.fillItem(globalItems::fill);
 
@@ -300,6 +314,14 @@ public class LevelProgressionMenu {
 
             template.slotPos(levelItem::slotPos);
             template.modify(levelItem::modify);
+
+            // Clicking a locked level opens the LevelBuyMenu at that level
+            template.onClick(c -> {
+                var skill = (Skill) c.menu().getProperty("skill");
+                if (skill == null || plugin.getSkillCoinsEconomy() == null) return;
+                var buyMenu = new dev.aurelium.auraskills.bukkit.skillcoins.menu.LevelBuyMenu(plugin, plugin.getSkillCoinsEconomy());
+                buyMenu.openFromLevelClick(c.player(), skill, c.value());
+            });
         });
 
         menu.component("rewards", Integer.class, component -> {

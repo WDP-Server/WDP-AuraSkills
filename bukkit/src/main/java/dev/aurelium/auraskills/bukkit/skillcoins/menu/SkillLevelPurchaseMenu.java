@@ -557,17 +557,19 @@ public class SkillLevelPurchaseMenu {
     }
     
     private void handleSelectionClick(Player player, int slot, ItemStack clicked) {
-        // Back button at slot 48 - return to shop
+        // Back button at slot 48 - return to main shop
         if (slot == 48 && clicked.getType() == Material.ARROW) {
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
-            new ShopMainMenu(plugin, economy).open(player);
+            ShopMainMenu shopMenu = new ShopMainMenu(plugin, economy);
+            shopMenu.open(player);
             return;
         }
         
-        // Back button at slot 53
+        // Back button at slot 53 - return to main shop
         if (slot == 53 && clicked.getType() == Material.ARROW) {
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
-            new ShopMainMenu(plugin, economy).open(player);
+            ShopMainMenu shopMenu = new ShopMainMenu(plugin, economy);
+            shopMenu.open(player);
             return;
         }
         
@@ -628,7 +630,8 @@ public class SkillLevelPurchaseMenu {
         } else if (slot == 53) {
             // Back button: return to main shop
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
-            new ShopMainMenu(plugin, economy).open(player);
+            ShopMainMenu shopMenu = new ShopMainMenu(plugin, economy);
+            shopMenu.open(player);
         }
     }
     

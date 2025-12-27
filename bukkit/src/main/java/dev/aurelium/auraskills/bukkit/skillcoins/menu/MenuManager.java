@@ -38,6 +38,10 @@ public class MenuManager implements Listener {
     private final Map<UUID, SellMenu> sellMenus = new ConcurrentHashMap<>();
     private final Map<UUID, LevelBuyMenu> levelBuyMenus = new ConcurrentHashMap<>();
     
+    // Persistent origin tracking to avoid race conditions between close and click handlers
+    public enum MenuOrigin { SHOP_MAIN, SKILL_SELECT, SKILL_ROAD }
+    private final Map<UUID, MenuOrigin> menuOrigins = new ConcurrentHashMap<>();
+    
     private MenuManager(AuraSkills plugin) {
         if (plugin == null) {
             throw new IllegalArgumentException("AuraSkills plugin instance cannot be null");
@@ -126,6 +130,30 @@ public class MenuManager implements Listener {
         if (player == null) return;
         levelBuyMenus.remove(player.getUniqueId());
     }
+
+    /**
+     * Set the origin for a player's menu interaction.
+     */
+    public void setMenuOrigin(UUID playerId, MenuOrigin origin) {
+        if (playerId == null || origin == null) return;
+        menuOrigins.put(playerId, origin);
+    }
+
+    /**
+     * Get the currently set origin for the player's menu, if any.
+     */
+    public java.util.Optional<MenuOrigin> getMenuOrigin(UUID playerId) {
+        if (playerId == null) return java.util.Optional.empty();
+        return java.util.Optional.ofNullable(menuOrigins.get(playerId));
+    }
+
+    /**
+     * Clear the stored menu origin for the player.
+     */
+    public void clearMenuOrigin(UUID playerId) {
+        if (playerId == null) return;
+        menuOrigins.remove(playerId);
+    }
     
     /**
      * Unregister all menus for a player (thread-safe cleanup)
@@ -141,6 +169,8 @@ public class MenuManager implements Listener {
         skillMenus.remove(playerId);
         sellMenus.remove(playerId);
         levelBuyMenus.remove(playerId);
+        // Also clear any persistent origin stored for the player
+        menuOrigins.remove(playerId);
     }
     
     /**

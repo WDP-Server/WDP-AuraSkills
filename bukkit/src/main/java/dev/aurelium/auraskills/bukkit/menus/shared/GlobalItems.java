@@ -38,7 +38,19 @@ public class GlobalItems {
             ActiveMenu activeMenu = c.menu();
             plugin.getSlate().openMenu(c.player(), activeMenu.getName(), activeMenu.getProperties(), activeMenu.getCurrentPage() - 1);
         });
-        item.modify(i -> i.menu().getCurrentPage() == 0 ? null : i.item());
+        // Show a glass pane when previous page is not available to preserve layout
+        item.modify(i -> {
+            if (i.menu().getCurrentPage() == 0) {
+                ItemStack glass = new ItemStack(org.bukkit.Material.BLACK_STAINED_GLASS_PANE);
+                var meta = glass.getItemMeta();
+                if (meta != null) {
+                    meta.setDisplayName(" ");
+                    glass.setItemMeta(meta);
+                }
+                return glass;
+            }
+            return i.item();
+        });
     }
 
     public void nextPage(ItemBuilder item) {
@@ -46,7 +58,19 @@ public class GlobalItems {
             ActiveMenu activeMenu = c.menu();
             plugin.getSlate().openMenu(c.player(), activeMenu.getName(), activeMenu.getProperties(), activeMenu.getCurrentPage() + 1);
         });
-        item.modify(i -> i.menu().getCurrentPage() == (i.menu().getTotalPages() - 1) ? null : i.item());
+        // Show a glass pane when next page is not available to preserve layout
+        item.modify(i -> {
+            if (i.menu().getCurrentPage() == (i.menu().getTotalPages() - 1)) {
+                ItemStack glass = new ItemStack(org.bukkit.Material.BLACK_STAINED_GLASS_PANE);
+                var meta = glass.getItemMeta();
+                if (meta != null) {
+                    meta.setDisplayName(" ");
+                    glass.setItemMeta(meta);
+                }
+                return glass;
+            }
+            return i.item();
+        });
     }
 
     public void close(ItemBuilder item) {
