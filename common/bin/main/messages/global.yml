@@ -85,6 +85,8 @@ leveler_format:
   mana_ability_unlock: "\n  <light_purple>{{leveler.mana_ability_unlock}} <blue><bold>{mana_ability}</bold>\n      <white>{desc}"
   mana_ability_level_up: "\n  <light_purple>{{leveler.mana_ability_level_up}} <blue><bold>{mana_ability}</bold> <dark_gray>{previous}→<gold>{level}\n      <white>{desc}"
   money_reward: "\n  <green>${amount}"
+  coin_reward: "\n  <gold>⬥ {amount} ⛃"
+  token_reward: "\n  <aqua>⬥ {amount} 🎟"
   desc_upgrade_value: "<dark_gray>{current}→<white>{next}"
   desc_wrap: "<white>      "
 rewards:

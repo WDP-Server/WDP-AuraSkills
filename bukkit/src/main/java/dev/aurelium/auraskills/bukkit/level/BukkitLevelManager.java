@@ -127,18 +127,31 @@ public class BukkitLevelManager extends LevelManager {
         // Check if WDP-Start plugin is loaded and wants to suppress messages
         try {
             Class<?> apiClass = Class.forName("com.wdp.start.api.WDPStartAPI");
+            plugin.logger().info("[DEBUG] WDP-Start API class found");
+            
             java.lang.reflect.Method isAvailable = apiClass.getMethod("isAvailable");
             java.lang.reflect.Method shouldSuppress = apiClass.getMethod("shouldSuppressLevelUpMessages", Player.class);
             
             Boolean available = (Boolean) isAvailable.invoke(null);
+            plugin.logger().info("[DEBUG] Checking WDP-Start API for " + player.getName() + " at " + System.currentTimeMillis() + " - Available: " + available);
+            
             if (available != null && available) {
                 Boolean suppress = (Boolean) shouldSuppress.invoke(null, player);
+                plugin.logger().info("[DEBUG] WDP-Start API result for " + player.getName() + " - Suppress: " + suppress);
+                
+                if (suppress != null && suppress) {
+                    plugin.logger().info("[DEBUG] Suppressing level up messages for " + player.getName() + " (WDP-Start Quest 2)");
+                }
                 return suppress != null && suppress;
+            } else {
+                plugin.logger().info("[DEBUG] WDP-Start API not available or returned false");
             }
         } catch (ClassNotFoundException e) {
+            plugin.logger().info("[DEBUG] WDP-Start API not found (ClassNotFoundException)");
             // WDP-Start not installed, that's fine
         } catch (Exception e) {
             plugin.logger().warn("Error checking WDP-Start API: " + e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }

@@ -3,8 +3,7 @@ package dev.aurelium.auraskills.bukkit.skillcoins;
 import dev.aurelium.auraskills.api.event.skill.SkillLevelUpEvent;
 import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.common.skillcoins.CurrencyType;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Sound;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -46,25 +45,12 @@ public class TokenRewardListener implements Listener {
             plugin.getSkillCoinsEconomy().addBalance(player.getUniqueId(), CurrencyType.COINS, coinsReward);
         }
         
-        // Send notification message
-        player.sendMessage(ChatColor.GOLD + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        player.sendMessage("");
-        player.sendMessage(ChatColor.GREEN + "  ✦ " + ChatColor.YELLOW + ChatColor.BOLD + "LEVEL UP REWARDS" + ChatColor.GREEN + " ✦");
-        player.sendMessage("");
-        player.sendMessage(ChatColor.GRAY + "  " + event.getSkill().getDisplayName(event.getUser().getLocale()) + 
-                " Level " + ChatColor.WHITE + level);
-        player.sendMessage("");
-        if (coinsReward > 0) {
-            player.sendMessage(ChatColor.GOLD + "  ⬥ " + ChatColor.YELLOW + coinsReward + " ⛃");
-        }
-        player.sendMessage(ChatColor.AQUA + "  ⬥ " + ChatColor.WHITE + tokenReward + " 🎟");
-        player.sendMessage("");
-        player.sendMessage(ChatColor.GRAY + "  Use 🎟 to purchase skill levels at " + ChatColor.YELLOW + "/shop");
-        player.sendMessage("");
-        player.sendMessage(ChatColor.GOLD + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        // Record transient reward so the default AuraSkills level-up message can include it
+        // (This avoids duplicate custom messages and ensures consistent formatting)
+        dev.aurelium.auraskills.common.skillcoins.TokenCoinRewardCache.put(player.getUniqueId(), event.getSkill().toString(), level, coinsReward, tokenReward);
         
-        // Play sound
-        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.5f);
+        // Note: we intentionally do not send a separate chat message or play a sound here
+        // The default AuraSkills LevelUpMessenger will display the rewards in the main level-up chat/title.
     }
 
     /**

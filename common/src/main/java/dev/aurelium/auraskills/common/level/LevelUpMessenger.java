@@ -85,6 +85,23 @@ public class LevelUpMessenger {
                 rewardMessage.append(msg);
             }
         }
+        // Check transient token/coin rewards recorded by TokenRewardListener
+        dev.aurelium.auraskills.common.skillcoins.TokenCoinRewardCache.TokenCoinReward r =
+                dev.aurelium.auraskills.common.skillcoins.TokenCoinRewardCache.getAndRemoveIfMatch(user.getUuid(), skill.toString(), level);
+        if (r != null) {
+            // Append coin message
+            if (r.coins > 0) {
+                MessageBuilder builder = MessageBuilder.create(plugin).locale(locale);
+                builder.rawMessage(LevelerFormat.COIN_REWARD, "amount", String.valueOf(r.coins));
+                rewardMessage.append(builder.toString());
+            }
+            // Append token message
+            if (r.tokens > 0) {
+                MessageBuilder builder = MessageBuilder.create(plugin).locale(locale);
+                builder.rawMessage(LevelerFormat.TOKEN_REWARD, "amount", String.valueOf(r.tokens));
+                rewardMessage.append(builder.toString());
+            }
+        }
         return rewardMessage.toString();
     }
 
