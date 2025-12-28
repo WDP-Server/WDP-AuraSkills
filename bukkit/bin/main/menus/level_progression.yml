@@ -81,16 +81,17 @@ items:
     display_name: ' '
   previous_page:
     pos: 5,3
-    material: arrow
+    material: spyglass
     display_name: '<gold>{{previous_page}}'
     lore:
     - '<yellow>{{previous_page_click}}'
   page_info:
     pos: 5,4
     material: paper
-    display_name: '<aqua>Pages'
+    display_name: '<gray>{{page_text}}: <white>{page} <gray>/ {total_pages}'
     lore:
-    - '<gray>{{page_text}}: <white>{page} <gray>/ {total_pages}'
+    - ''
+    - '§8Viewing level {start}-{end}'
   next_page:
     pos: 5,5
     material: arrow

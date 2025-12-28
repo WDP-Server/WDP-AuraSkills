@@ -75,6 +75,29 @@ public class LevelProgressionMenu {
             return String.format("%,.0f", plugin.getSkillCoinsEconomy().getBalance(p.player().getUniqueId(), CurrencyType.TOKENS));
         });
         menu.replace("page", p -> String.valueOf(p.menu().getCurrentPage() + 1));
+
+        // View range and max-level placeholders for navbar parsing
+        menu.replace("start", p -> {
+            var levelItem = new SkillLevelItem(plugin);
+            int startLevel = levelItem.startLevel(p.menu());
+            int itemsPerPage = levelItem.itemsPerPage(p.menu());
+            int start = startLevel + p.menu().getCurrentPage() * itemsPerPage;
+            return String.valueOf(start);
+        });
+
+        menu.replace("end", p -> {
+            var skill = (Skill) p.menu().getProperty("skill");
+            var levelItem = new SkillLevelItem(plugin);
+            int startLevel = levelItem.startLevel(p.menu());
+            int itemsPerPage = levelItem.itemsPerPage(p.menu());
+            int start = startLevel + p.menu().getCurrentPage() * itemsPerPage;
+            int end = Math.min(start + itemsPerPage - 1, skill.getMaxLevel());
+            return String.valueOf(end);
+        });
+
+        menu.replace("start_level", p -> String.valueOf(new SkillLevelItem(plugin).startLevel(p.menu())));
+        menu.replace("max_level", p -> String.valueOf(((Skill) p.menu().getProperty("skill")).getMaxLevel()));
+
         menu.replace("total_pages", p -> {
 
             Skill skill = (Skill) p.menu().getProperty("skill");

@@ -184,7 +184,7 @@ public class TokenExchangeMenu {
             
             List<String> lore = new ArrayList<>();
             lore.add("");
-            lore.add(ChatColor.of("#d0de34ff") + "Tokens to purchase: " + ChatColor.of("#FFFFFF") + quantity);
+            lore.add(ChatColor.of("#d0de34") + "Tokens to purchase: " + ChatColor.of("#FFFFFF") + quantity);
             lore.add(ChatColor.GRAY + "Exchange Rate: " + ChatColor.of("#FFD700") + 
                     COINS_PER_TOKEN + " ⛃" + ChatColor.of("#808080") + " = " + 
                     ChatColor.GREEN + "1 🎟");
@@ -296,8 +296,8 @@ public class TokenExchangeMenu {
         }
         inv.setItem(49, confirm);
         
-        // Back button (slot 53) - use arrow to return to main shop
-        ItemStack close = new ItemStack(Material.ARROW);
+        // Back button (slot 53) - use spyglass to return to main shop
+        ItemStack close = new ItemStack(Material.SPYGLASS);
         ItemMeta closeMeta = close.getItemMeta();
         if (closeMeta != null) {
             closeMeta.setDisplayName(ChatColor.of("#55FF55") + "← Back");
@@ -340,7 +340,7 @@ public class TokenExchangeMenu {
         createPresetButton(inv, 16, 1000, "1000 Tokens (MAX)", Material.DIAMOND);
         
         // Back button (slot 22)
-        ItemStack back = new ItemStack(Material.ARROW);
+        ItemStack back = new ItemStack(Material.SPYGLASS);
         ItemMeta backMeta = back.getItemMeta();
         if (backMeta != null) {
             backMeta.setDisplayName(ChatColor.of("#FFFF00") + "← Back");

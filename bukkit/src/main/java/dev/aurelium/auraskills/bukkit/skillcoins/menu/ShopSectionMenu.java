@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -66,39 +67,65 @@ public class ShopSectionMenu {
      * Generate menu title with validation
      */
     private String generateMenuTitle(ShopSection section) {
+        return formatSectionTitle(section);
+    }
+
+    /**
+     * Format section header (icon + color + cleaned name) without appending "Shop".
+     * Public so other menus (main shop) can reuse the same styling.
+     */
+    public static String formatSectionHeader(ShopSection section) {
         try {
             String sectionName = section.getDisplayName();
             if (sectionName == null || sectionName.isEmpty()) {
                 sectionName = section.getId();
             }
-            
-            if (sectionName == null) {
+            if (sectionName == null || sectionName.isEmpty()) {
                 sectionName = "Shop";
             }
-            
-            // Color-coded titles based on section
-            if (sectionName.contains("Combat")) {
-                return ChatColor.of("#FF5555") + "⚔ Combat Shop";
-            } else if (sectionName.contains("Enchantments")) {
-                return ChatColor.of("#FF55FF") + "✦ Enchantments Shop";
-            } else if (sectionName.contains("Resources")) {
-                return ChatColor.of("#55FF55") + "❖ Resources Shop";
-            } else if (sectionName.contains("Tools")) {
-                return ChatColor.of("#5555FF") + "⚒ Tools Shop";
-            } else {
-                // Ensure section menus include the word 'Shop'
-                if (sectionName.toLowerCase().contains("shop")) {
-                    return ChatColor.of("#00FFFF") + sectionName;
-                } else {
-                    return ChatColor.of("#00FFFF") + sectionName + ChatColor.of("#FFFFFF") + " Shop";
-                }
-            }
+
+            // Remove alternate color codes and leading icons/symbols so we don't duplicate icons
+            String cleaned = sectionName.replaceAll("(?i)&[0-9A-FK-OR]", "").replaceAll("^[^\\p{L}\\p{N}]+", "").trim();
+            if (cleaned.isEmpty()) cleaned = section.getId();
+
+            String lower = cleaned.toLowerCase(Locale.ROOT);
+            String color = "#00FFFF";
+            String icon = "";
+
+            // Map common section keywords to colors and icons
+            if (lower.contains("combat")) { color = "#FF5555"; icon = "⚔ "; }
+            else if (lower.contains("enchant")) { color = "#FF55FF"; icon = "✦ "; }
+            else if (lower.contains("resource")) { color = "#55FF55"; icon = "❖ "; }
+            else if (lower.contains("tool")) { color = "#5555FF"; icon = "⚒ "; }
+            else if (lower.contains("food")) { color = "#FFFF00"; icon = "🍖 "; }
+            else if (lower.contains("block")) { color = "#FFD700"; icon = "⬛ "; }
+            else if (lower.contains("farm")) { color = "#55FF55"; icon = "🌾 "; }
+            else if (lower.contains("potion")) { color = "#FF55FF"; icon = "⚗ "; }
+            else if (lower.contains("redstone")) { color = "#FF5555"; icon = "🔴 "; }
+            else if (lower.contains("skill") || lower.contains("level")) { color = "#FFD700"; icon = "★ "; }
+            else if (lower.contains("token") || lower.contains("exchange")) { color = "#00FFFF"; icon = "🎟 "; }
+            else if (lower.contains("misc")) { color = "#808080"; icon = "⋯ "; }
+
+            return ChatColor.of(color) + icon + ChatColor.of("#FFFFFF") + cleaned;
         } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error generating menu title", e);
+            // Fall back to a simple cyan title on error
             return ChatColor.of("#00FFFF") + "Shop";
         }
     }
-    
+
+    /**
+     * Format full section title, appending " Shop" if not present.
+     */
+    public static String formatSectionTitle(ShopSection section) {
+        String header = formatSectionHeader(section);
+        String name = (section.getDisplayName() != null ? section.getDisplayName().replaceAll("(?i)&[0-9A-FK-OR]", "").replaceAll("^[^\\p{L}\\p{N}]+", "").trim() : section.getId());
+        String lower = (name != null ? name.toLowerCase(Locale.ROOT) : "");
+        if (!lower.contains("shop")) {
+            header += ChatColor.of("#FFFFFF") + " Shop";
+        }
+        return header;
+    }
+
     /**
      * Open menu with comprehensive validation
      */
@@ -401,8 +428,8 @@ public class ShopSectionMenu {
                 return;
             }
             
-            // Back button (slot 53 now uses ARROW)
-            if (slot == 53 && clicked.getType() == Material.ARROW) {
+            // Back button (slot 53 now uses SPYGLASS)
+            if (slot == 53 && clicked.getType() == Material.SPYGLASS) {
                 playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
                 new ShopMainMenu(plugin, economy).open(player);
                 return;

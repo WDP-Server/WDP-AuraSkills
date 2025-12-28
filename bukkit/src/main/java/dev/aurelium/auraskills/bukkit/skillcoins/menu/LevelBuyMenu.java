@@ -232,19 +232,19 @@ public class LevelBuyMenu {
                 if (manager != null) {
                     currentOrigin = manager.getMenuOrigin(uuid).orElse(MenuManager.MenuOrigin.SKILL_SELECT);
                 }
-                ItemStack backItem = new ItemStack(Material.ARROW);
+                ItemStack backItem = new ItemStack(Material.SPYGLASS);
                 ItemMeta backMeta = backItem.getItemMeta();
                 if (backMeta != null) {
                     String displayName;
                     List<String> lore = new ArrayList<>();
-                    if (currentOrigin == MenuManager.MenuOrigin.SKILL_SELECT) {
-                        displayName = ChatColor.of("#55FF55") + "← Back";
+                        if (currentOrigin == MenuManager.MenuOrigin.SKILL_SELECT) {
+                        displayName = "§e§l← Back";
                     } else if (currentOrigin == MenuManager.MenuOrigin.SKILL_ROAD) {
-                        displayName = ChatColor.of("#55FF55") + "← Back to road";
+                        displayName = "§e§l← Back to road";
                         lore.add(" ");
-                        lore.add(ChatColor.of("#808080") + "Return to skill road");
+                        lore.add("§7Return to Skill Road");
                     } else {
-                        displayName = ChatColor.of("#55FF55") + "← Back";
+                        displayName = "§e§l← Back";
                     }
                     backMeta.setDisplayName(displayName);
                     backMeta.setLore(lore);

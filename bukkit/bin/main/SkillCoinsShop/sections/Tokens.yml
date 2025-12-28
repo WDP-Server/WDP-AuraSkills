@@ -1,7 +1,7 @@
 enable: false
 slot: 22
 material: NETHER_STAR
-displayname: '&6★ &fPremium Tokens'
+displayname: 'Premium Tokens'
 title: 'Premium Tokens Shop'
 hidden: false
 sub-section: false

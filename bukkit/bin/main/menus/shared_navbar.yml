@@ -29,33 +29,34 @@ navbar:
   previous_page:
     slot: 48
     material: arrow
-    display_name: '<gold>{{previous_page}}'
+    display_name: '§e§l← Previous'
     lore:
-    - ' '
-    - '<yellow>{{previous_page_click}}'
+    - '§7Go to previous page'
     
   page_info:
     slot: 49
     material: paper
-    display_name: '<aqua>Pages'
+    display_name: '§e§lPage {page}/{total_pages}'
     lore:
-    - ' '
-    - '<gray>{{page_text}}: <white>{page} <gray>/ {total_pages}'
+    - ''
+    - '§7Current page: {page}'
+    - '§7Total pages: {total_pages}'
+    - ''
+    - '§7Viewing levels: {start}-{end} / {max_level}'
     
   next_page:
     slot: 50
     material: arrow
-    display_name: '<gold>{{next_page}}'
+    display_name: '§e§lNext →'
     lore:
-    - ' '
-    - '<yellow>{{next_page_click}}'
+    - '§7Go to next page'
     
   back_close:
     slot: 53
-    material: arrow
-    display_name: '<green>{{back}}'
+    material: spyglass
+    display_name: '§c§l← Back'
     lore:
-    - '<gray>{{back_click}}'
+    - '§7Return to previous menu'
     
 # Exceptions for menus that should only show back button
 exceptions:

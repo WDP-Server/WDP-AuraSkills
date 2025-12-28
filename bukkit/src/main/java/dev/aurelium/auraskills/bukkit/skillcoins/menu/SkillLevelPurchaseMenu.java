@@ -437,8 +437,8 @@ public class SkillLevelPurchaseMenu {
         if (inv == null) return;
         
         try {
-            // Back button (slot 48) - Arrow style
-            ItemStack back = new ItemStack(Material.ARROW);
+            // Back button (slot 48) - Spyglass style
+            ItemStack back = new ItemStack(Material.SPYGLASS);
             ItemMeta meta = back.getItemMeta();
             if (meta != null) {
                 meta.setDisplayName(ChatColor.of("#55FF55") + "← Back / Quick Select");
@@ -451,8 +451,8 @@ public class SkillLevelPurchaseMenu {
             }
             inv.setItem(48, back);
             
-            // Back button (slot 53) - Arrow style to return to main shop
-            ItemStack close = new ItemStack(Material.ARROW);
+            // Back button (slot 53) - Spyglass style to return to main shop
+            ItemStack close = new ItemStack(Material.SPYGLASS);
             ItemMeta closeMeta = close.getItemMeta();
             if (closeMeta != null) {
                 closeMeta.setDisplayName(ChatColor.of("#55FF55") + "← Back");
@@ -490,7 +490,7 @@ public class SkillLevelPurchaseMenu {
             if (available >= 25) createPresetButton(inv, 15, 25, "25 Levels", Material.EMERALD_BLOCK);
             if (available > 0) createPresetButton(inv, 16, available, "MAX (" + available + ")", Material.DIAMOND);
             
-            ItemStack back = new ItemStack(Material.ARROW);
+            ItemStack back = new ItemStack(Material.SPYGLASS);
             ItemMeta backMeta = back.getItemMeta();
             if (backMeta != null) {
                 backMeta.setDisplayName(ChatColor.of("#FFFF00") + "← Back");
@@ -557,7 +557,7 @@ public class SkillLevelPurchaseMenu {
     
     private void handleSelectionClick(Player player, int slot, ItemStack clicked) {
         // Back button at slot 48 - return to main shop
-        if (slot == 48 && clicked.getType() == Material.ARROW) {
+        if (slot == 48 && clicked.getType() == Material.SPYGLASS) {
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
             ShopMainMenu shopMenu = new ShopMainMenu(plugin, economy);
             shopMenu.open(player);
@@ -565,7 +565,7 @@ public class SkillLevelPurchaseMenu {
         }
         
         // Back button at slot 53 - return to main shop
-        if (slot == 53 && clicked.getType() == Material.ARROW) {
+        if (slot == 53 && clicked.getType() == Material.SPYGLASS) {
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
             ShopMainMenu shopMenu = new ShopMainMenu(plugin, economy);
             shopMenu.open(player);

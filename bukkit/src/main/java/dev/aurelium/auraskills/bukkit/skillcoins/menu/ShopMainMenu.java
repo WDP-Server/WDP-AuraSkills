@@ -280,18 +280,10 @@ public class ShopMainMenu {
                     ItemStack item = new ItemStack(icon);
                     ItemMeta meta = item.getItemMeta();
                     if (meta != null) {
-                        String displayName = section.getDisplayName();
-                        if (displayName != null && !displayName.isEmpty()) {
-                            displayName = ChatColor.translateAlternateColorCodes('&', displayName);
-                            meta.setDisplayName(displayName);
-                        } else {
-                            meta.setDisplayName(ChatColor.AQUA + section.getId());
-                        }
+                        // Use the unified formatted header (icon + color) as the item display name
+                        meta.setDisplayName(ShopSectionMenu.formatSectionHeader(section));
                         
                         List<String> lore = new ArrayList<>();
-                        lore.add("");
-                        lore.add(ChatColor.GRAY + "Browse and purchase items");
-                        lore.add(ChatColor.GRAY + "in this category");
                         lore.add("");
                         lore.add(ChatColor.GRAY + "Items: " + 
                                 ChatColor.WHITE + section.getItemCount());

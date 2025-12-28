@@ -85,7 +85,7 @@ public class SharedNavbarManager {
         // Only show back button for skill selection menus
         String backText = menuName.equals("skills") ? "Close" : "Back";
         
-        ItemStack back = new ItemStack(Material.ARROW);
+        ItemStack back = new ItemStack(Material.SPYGLASS);
         ItemMeta meta = back.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ChatColor.GREEN + backText);
@@ -343,7 +343,7 @@ public class SharedNavbarManager {
             Replacer replacer = new Replacer()
                 .map("{page}", () -> String.valueOf(page));
             
-            String materialName = navbarConfig.getString("navbar.previous_page.material", "ARROW");
+            String materialName = navbarConfig.getString("navbar.previous_page.material", "SPYGLASS");
             Material material = Material.valueOf(materialName.toUpperCase());
             
             prev = new ItemStack(material);
@@ -451,7 +451,7 @@ public class SharedNavbarManager {
         Replacer replacer = new Replacer()
             .map("{menu_name}", () -> "Main Menu"); // Default fallback
         
-        String materialName = navbarConfig.getString("navbar.back_close.material", "ARROW");
+        String materialName = navbarConfig.getString("navbar.back_close.material", "SPYGLASS");
         Material material = Material.valueOf(materialName.toUpperCase());
         
         ItemStack back = new ItemStack(material);

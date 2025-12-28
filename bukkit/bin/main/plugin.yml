@@ -26,6 +26,7 @@ permissions:
     children:
       auraskills.command.user: true
       auraskills.skill.*: true
+      auraskills.command.shop: true
       auraskills.command.admin: true
     default: false
 
@@ -203,6 +204,8 @@ permissions:
     default: op
   auraskills.command.openmenu:
     default: op
+  auraskills.command.shop:
+    default: true
   auraskills.command.manaability.resetcooldown:
     default: op
   auraskills.command.jobs:
