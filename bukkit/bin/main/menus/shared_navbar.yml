@@ -1,65 +1,73 @@
-# Shared navbar configuration for all menus
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║                    Unified Navbar Configuration                            ║
+# ║                       AuraSkills-Coins System                              ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
 # Layout: [Balance] [Glass] [Glass] [Prev] [Page] [Next] [Glass] [Glass] [Back/Close]
-# Slots: 45-53 (bottom row)
+# Slot 53 shows BACK when previous_menu exists, otherwise shows CLOSE
 
 navbar:
+  # Slot 45: Balance display (always visible)
   balance:
     slot: 45
     material: gold_nugget
-    display_name: '<gold>Balance:'
+    display_name: '§6Balance:'
     lore:
-    - ' '
-    - '<yellow>SkillCoins: <dark_yellow>{coins} ⛃'
-    - '<green>Tokens: <dark_green>{tokens} 🎟' 
-    
-  glass:
-    - slot: 46
-      material: black_stained_glass_pane
-      display_name: ' '
-    - slot: 47
-      material: black_stained_glass_pane
-      display_name: ' '
-    - slot: 51
-      material: black_stained_glass_pane
-      display_name: ' '
-    - slot: 52
-      material: black_stained_glass_pane
-      display_name: ' '
-    
+      - ' '
+      - '§eSkillCoins: §6{coins} ⛃'
+      - '§aTokens: §2{tokens} 🎟'
+
+  # Slots 46-47, 51-52: Glass filler (merged into one definition)
+  glass_fill:
+    slots: [46, 47, 51, 52]
+    material: black_stained_glass_pane
+    display_name: ' '
+
+  # Slot 48: Previous page (only shown when page > 1)
   previous_page:
     slot: 48
     material: arrow
     display_name: '§e§l← Previous'
     lore:
-    - '§7Go to previous page'
-    
+      - '§7Go to previous page'
+
+  # Slot 49: Page info (center)
   page_info:
     slot: 49
     material: paper
-    display_name: '§e§lPage §f§l{page} §8§l/ {total_pages}'
+    display_name: '§e§lPage §f§l{page} §8/ §f§l{total_pages}'
     lore:
-    - ''
-    - '§7Current page: {page}'
-    - '§7Total pages: {total_pages}'
-    - ''
-    - '§7Viewing levels: {start}-{end} / {max_level}'
-    
+      - ''
+      - '§7Current page: §f{page}'
+      - '§7Total pages: §f{total_pages}'
+      - ''
+
+  # Slot 50: Next page (only shown when page < total_pages)
   next_page:
     slot: 50
     material: arrow
     display_name: '§e§lNext →'
     lore:
-    - '§7Go to next page'
-    
-  back_close:
+      - '§7Go to next page'
+
+  # Slot 53: Back button (shown when previous_menu exists)
+  back:
     slot: 53
     material: spyglass
     display_name: '§c§l← Back'
     lore:
-    - '§7Return to previous menu'
-    
-# Exceptions for menus that should only show back button
+      - '§7Return to previous menu'
+
+  # Slot 53: Close button (shown when NO previous_menu)
+  close:
+    slot: 53
+    material: barrier
+    display_name: '§c§l✗ Close'
+    lore:
+      - '§7Close this menu'
+
+# Exceptions for menus that need special navbar handling
 exceptions:
+  # Menus that only show back button (no pagination, no balance)
   skill_selection:
     - skills
     - skill_select
@@ -67,3 +75,8 @@ exceptions:
     - skill_sources
     - skill_stats
     - stat_info
+  
+  # Menus that hide balance display
+  no_balance:
+    - welcome
+    - confirmation

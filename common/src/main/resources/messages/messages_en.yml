@@ -1045,4 +1045,21 @@ units:
   mana: Mana
   hp: HP
   xp: XP
+skillcoins:
+  shop_unavailable: "&cThe shop is not available right now."
+  shop_no_sections: "&cThe shop has no sections loaded."
+  balance_header: "&6━━━━━━━ &eYour Balance &6━━━━━━━"
+  balance_coins: "&e⛃: &f{coins}"
+  balance_tokens: "&b🎟: &f{tokens}"
+  balance_footer: "&6━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  balance_other_header: "&6━━━━━━━ &e{player}'s Balance &6━━━━━━━"
+  amount_positive: "&cAmount must be positive!"
+  amount_negative: "&cAmount cannot be negative!"
+  invalid_currency: "&cInvalid currency type! Use 'coins' or 'tokens'."
+  player_not_found: "&cPlayer not found!"
+  give_success: "&aGave {amount} {currency} to {player}"
+  give_received: "&aYou received {amount} {currency}!"
+  take_success: "&aTook {amount} {currency} from {player}"
+  take_lost: "&eYou lost {amount} {currency}!"
+  set_success: "&aSet {player}'s {currency} balance to {amount}"
 file_version: 39

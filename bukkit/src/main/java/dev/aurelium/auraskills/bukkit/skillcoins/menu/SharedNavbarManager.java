@@ -265,10 +265,39 @@ public class SharedNavbarManager {
     private void addGlassPanes(Inventory inv) {
         if (navbarConfig == null) return;
 
-        // New single list configuration: navbar.glass:
-        // - material: BLACK_STAINED_GLASS_PANE
-        //   display_name: ' '
-        //   slot: 46
+        // New unified format: glass_fill with slots array
+        if (navbarConfig.contains("navbar.glass_fill")) {
+            String materialName = navbarConfig.getString("navbar.glass_fill.material", "BLACK_STAINED_GLASS_PANE");
+            Material material;
+            try {
+                material = Material.valueOf(materialName.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                AuraSkills.getPlugin().getLogger().log(
+                        Level.WARNING,
+                        "Invalid material '" + materialName + "' for navbar glass_fill. Using BLACK_STAINED_GLASS_PANE instead.",
+                        ex
+                );
+                material = Material.BLACK_STAINED_GLASS_PANE;
+            }
+            String displayName = navbarConfig.getString("navbar.glass_fill.display_name", " ");
+
+            ItemStack glass = new ItemStack(material);
+            ItemMeta meta = glass.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(displayName);
+                glass.setItemMeta(meta);
+            }
+
+            List<Integer> slots = navbarConfig.getIntegerList("navbar.glass_fill.slots");
+            for (int slot : slots) {
+                if (slot >= 45 && slot <= 53) {
+                    inv.setItem(slot, glass);
+                }
+            }
+            return;
+        }
+
+        // Old list format: navbar.glass: [...]
         if (navbarConfig.contains("navbar.glass")) {
             List<Map<?, ?>> glassList = navbarConfig.getMapList("navbar.glass");
             for (Map<?, ?> entry : glassList) {
@@ -446,32 +475,74 @@ public class SharedNavbarManager {
     }
     
     private void addBackButton(Inventory inv) {
-        if (navbarConfig == null || !navbarConfig.contains("navbar.back_close")) return;
+        addBackButton(inv, true); // Default: show back button (has previous menu)
+    }
+
+    /**
+     * Add back or close button based on whether there's a previous menu
+     * @param inv The inventory to add the button to
+     * @param hasPreviousMenu True to show back button, false to show close button
+     */
+    private void addBackButton(Inventory inv, boolean hasPreviousMenu) {
+        if (navbarConfig == null) return;
+        
+        String configKey = hasPreviousMenu ? "navbar.back" : "navbar.close";
+        String fallbackKey = "navbar.back_close"; // Backwards compatibility
+        
+        // Try new format first
+        if (!navbarConfig.contains(configKey)) {
+            // Fall back to old back_close format
+            if (!navbarConfig.contains(fallbackKey)) return;
+            configKey = fallbackKey;
+        }
         
         Replacer replacer = new Replacer()
             .map("{menu_name}", () -> "Main Menu"); // Default fallback
         
-        String materialName = navbarConfig.getString("navbar.back_close.material", "SPYGLASS");
-        Material material = Material.valueOf(materialName.toUpperCase());
+        Material defaultMaterial = hasPreviousMenu ? Material.SPYGLASS : Material.BARRIER;
+        String materialName = navbarConfig.getString(configKey + ".material");
+        Material material;
+        if (materialName == null || materialName.trim().isEmpty()) {
+            material = defaultMaterial;
+        } else {
+            try {
+                material = Material.valueOf(materialName.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                AuraSkills.getPlugin().getLogger().log(
+                        Level.WARNING,
+                        "Invalid material '" + materialName + "' for navbar key '" + configKey + "'. " +
+                        "Using default material '" + defaultMaterial + "' instead.",
+                        ex
+                );
+                material = defaultMaterial;
+            }
+        }
         
-        ItemStack back = new ItemStack(material);
-        ItemMeta meta = back.getItemMeta();
+        ItemStack button = new ItemStack(material);
+        ItemMeta meta = button.getItemMeta();
         if (meta != null) {
-            String displayName = navbarConfig.getString("navbar.back_close.display_name", "{{back}}");
+            String displayName = navbarConfig.getString(configKey + ".display_name", hasPreviousMenu ? "§c§l← Back" : "§c§l✗ Close");
             displayName = applyMenuPlaceholders(displayName, null, "navbar", replacer);
             meta.setDisplayName(displayName);
             
             List<String> lore = new ArrayList<>();
-            List<String> configLore = navbarConfig.getStringList("navbar.back_close.lore");
+            List<String> configLore = navbarConfig.getStringList(configKey + ".lore");
             for (String line : configLore) {
                 line = applyMenuPlaceholders(line, null, "navbar", replacer);
                 lore.add(line);
             }
             meta.setLore(lore);
-            back.setItemMeta(meta);
+            button.setItemMeta(meta);
         }
         
-        int slot = navbarConfig.getInt("navbar.back_close.slot", 53);
-        inv.setItem(slot, back);
+        int slot = navbarConfig.getInt(configKey + ".slot", 53);
+        inv.setItem(slot, button);
+    }
+
+    /**
+     * Add close button (for menus without a previous menu)
+     */
+    public void addCloseButton(Inventory inv) {
+        addBackButton(inv, false);
     }
 }

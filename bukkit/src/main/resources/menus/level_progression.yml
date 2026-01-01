@@ -66,16 +66,16 @@ items:
   balance:
     pos: 5,0
     material: gold_nugget
-    display_name: '<gold>Balance:'
+    display_name: '§6Balance:'
     lore:
     - ' '
-    - '<yellow>SkillCoins: <gold>{coins} ⛃'
-    - '<green>Tokens: <dark_green>{tokens} 🎟'
-  glass_left_1:
+    - '§eSkillCoins: §6{coins} ⛃'
+    - '§aTokens: §2{tokens} 🎟'
+  glass_fill_1:
     pos: 5,1
     material: black_stained_glass_pane
     display_name: ' '
-  glass_left_2:
+  glass_fill_2:
     pos: 5,2
     material: black_stained_glass_pane
     display_name: ' '
@@ -84,34 +84,35 @@ items:
     material: arrow
     display_name: '§e§l← Previous'
     lore:
-    - '<yellow>{{previous_page_click}}'
+    - '§7Go to previous page'
   page_info:
     pos: 5,4
     material: paper
-    display_name: '<gray>{{page_text}}: <white>{page}<dark_gray> /{total_pages}'
+    display_name: '§e§lPage §f§l{page} §8/ §f§l{total_pages}'
     lore:
     - ''
-    - '§8Viewing level {start}-{end}'
+    - '§7Current page: §f{page}'
+    - '§7Total pages: §f{total_pages}'
   next_page:
     pos: 5,5
     material: arrow
     display_name: '§e§lNext →'
     lore:
-    - '<yellow>{{next_page_click}}'
-  glass_right_1:
+    - '§7Go to next page'
+  glass_fill_3:
     pos: 5,6
     material: black_stained_glass_pane
     display_name: ' '
-  glass_right_2:
+  glass_fill_4:
     pos: 5,7
     material: black_stained_glass_pane
     display_name: ' '
-  back_close:
+  back:
     pos: 5,8
     material: spyglass
     display_name: '§c§l← Back'
     lore:
-    - '<gray>{{back_click}}' 
+    - '§7Return to previous menu'
 templates:
   skill:
     pos: 0,0
