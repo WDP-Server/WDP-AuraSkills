@@ -3,9 +3,10 @@ package dev.aurelium.auraskills.bukkit.skillcoins.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.aurelium.auraskills.bukkit.AuraSkills;
+import dev.aurelium.auraskills.common.message.type.SkillCoinsMessage;
 import dev.aurelium.auraskills.common.skillcoins.CurrencyType;
+import dev.aurelium.auraskills.common.util.text.TextUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,10 +27,12 @@ public class SkillCoinsCommand extends BaseCommand {
         double coins = plugin.getSkillCoinsEconomy().getBalance(player.getUniqueId(), CurrencyType.COINS);
         double tokens = plugin.getSkillCoinsEconomy().getBalance(player.getUniqueId(), CurrencyType.TOKENS);
         
-        player.sendMessage(ChatColor.GOLD + "━━━━━━━ " + ChatColor.YELLOW + "Your Balance" + ChatColor.GOLD + " ━━━━━━━");
-        player.sendMessage(ChatColor.YELLOW + "⛃: " + ChatColor.WHITE + String.format("%.2f", coins));
-        player.sendMessage(ChatColor.AQUA + "🎟: " + ChatColor.WHITE + String.format("%.2f", tokens));
-        player.sendMessage(ChatColor.GOLD + "━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        player.sendMessage(plugin.getMsg(SkillCoinsMessage.BALANCE_HEADER, plugin.getDefaultLanguage()));
+        player.sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.BALANCE_COINS, plugin.getDefaultLanguage()),
+                "{coins}", String.format("%.2f", coins)));
+        player.sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.BALANCE_TOKENS, plugin.getDefaultLanguage()),
+                "{tokens}", String.format("%.2f", tokens)));
+        player.sendMessage(plugin.getMsg(SkillCoinsMessage.BALANCE_FOOTER, plugin.getDefaultLanguage()));
     }
     
     @Subcommand("give")
@@ -39,7 +42,7 @@ public class SkillCoinsCommand extends BaseCommand {
     @Syntax("<player> <coins|tokens> <amount>")
     public void onGive(CommandSender sender, String playerName, String currencyStr, double amount) {
         if (amount <= 0) {
-            sender.sendMessage(ChatColor.RED + "Amount must be positive!");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.AMOUNT_POSITIVE, plugin.getDefaultLanguage()));
             return;
         }
         
@@ -47,23 +50,26 @@ public class SkillCoinsCommand extends BaseCommand {
         try {
             type = CurrencyType.valueOf(currencyStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            sender.sendMessage(ChatColor.RED + "Invalid currency type! Use 'coins' or 'tokens'.");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.INVALID_CURRENCY, plugin.getDefaultLanguage()));
             return;
         }
         
         OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
         if (target == null || !target.hasPlayedBefore()) {
-            sender.sendMessage(ChatColor.RED + "Player not found!");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.PLAYER_NOT_FOUND, plugin.getDefaultLanguage()));
             return;
         }
         
         plugin.getSkillCoinsEconomy().addBalance(target.getUniqueId(), type, amount);
-        sender.sendMessage(ChatColor.GREEN + "Gave " + String.format("%.2f", amount) + " " + 
-                type.getDisplayName() + " to " + playerName);
+        sender.sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.GIVE_SUCCESS, plugin.getDefaultLanguage()),
+                "{amount}", String.format("%.2f", amount),
+                "{currency}", type.getDisplayName(),
+                "{player}", playerName));
         
         if (target.isOnline()) {
-            target.getPlayer().sendMessage(ChatColor.GREEN + "You received " + String.format("%.2f", amount) + 
-                    " " + type.getDisplayName() + "!");
+            target.getPlayer().sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.GIVE_RECEIVED, plugin.getDefaultLanguage()),
+                    "{amount}", String.format("%.2f", amount),
+                    "{currency}", type.getDisplayName()));
         }
     }
     
@@ -74,7 +80,7 @@ public class SkillCoinsCommand extends BaseCommand {
     @Syntax("<player> <coins|tokens> <amount>")
     public void onTake(CommandSender sender, String playerName, String currencyStr, double amount) {
         if (amount <= 0) {
-            sender.sendMessage(ChatColor.RED + "Amount must be positive!");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.AMOUNT_POSITIVE, plugin.getDefaultLanguage()));
             return;
         }
         
@@ -82,23 +88,26 @@ public class SkillCoinsCommand extends BaseCommand {
         try {
             type = CurrencyType.valueOf(currencyStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            sender.sendMessage(ChatColor.RED + "Invalid currency type! Use 'coins' or 'tokens'.");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.INVALID_CURRENCY, plugin.getDefaultLanguage()));
             return;
         }
         
         OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
         if (target == null || !target.hasPlayedBefore()) {
-            sender.sendMessage(ChatColor.RED + "Player not found!");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.PLAYER_NOT_FOUND, plugin.getDefaultLanguage()));
             return;
         }
         
         plugin.getSkillCoinsEconomy().subtractBalance(target.getUniqueId(), type, amount);
-        sender.sendMessage(ChatColor.GREEN + "Took " + String.format("%.2f", amount) + " " + 
-                type.getDisplayName() + " from " + playerName);
+        sender.sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.TAKE_SUCCESS, plugin.getDefaultLanguage()),
+                "{amount}", String.format("%.2f", amount),
+                "{currency}", type.getDisplayName(),
+                "{player}", playerName));
         
         if (target.isOnline()) {
-            target.getPlayer().sendMessage(ChatColor.YELLOW + "You lost " + String.format("%.2f", amount) + 
-                    " " + type.getDisplayName() + "!");
+            target.getPlayer().sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.TAKE_LOST, plugin.getDefaultLanguage()),
+                    "{amount}", String.format("%.2f", amount),
+                    "{currency}", type.getDisplayName()));
         }
     }
     
@@ -109,7 +118,7 @@ public class SkillCoinsCommand extends BaseCommand {
     @Syntax("<player> <coins|tokens> <amount>")
     public void onSet(CommandSender sender, String playerName, String currencyStr, double amount) {
         if (amount < 0) {
-            sender.sendMessage(ChatColor.RED + "Amount cannot be negative!");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.AMOUNT_NEGATIVE, plugin.getDefaultLanguage()));
             return;
         }
         
@@ -117,19 +126,21 @@ public class SkillCoinsCommand extends BaseCommand {
         try {
             type = CurrencyType.valueOf(currencyStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            sender.sendMessage(ChatColor.RED + "Invalid currency type! Use 'coins' or 'tokens'.");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.INVALID_CURRENCY, plugin.getDefaultLanguage()));
             return;
         }
         
         OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
         if (target == null || !target.hasPlayedBefore()) {
-            sender.sendMessage(ChatColor.RED + "Player not found!");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.PLAYER_NOT_FOUND, plugin.getDefaultLanguage()));
             return;
         }
         
         plugin.getSkillCoinsEconomy().setBalance(target.getUniqueId(), type, amount);
-        sender.sendMessage(ChatColor.GREEN + "Set " + playerName + "'s " + type.getDisplayName() + 
-                " balance to " + String.format("%.2f", amount));
+        sender.sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.SET_SUCCESS, plugin.getDefaultLanguage()),
+                "{player}", playerName,
+                "{currency}", type.getDisplayName(),
+                "{amount}", String.format("%.2f", amount)));
     }
     
     @Subcommand("check")
@@ -140,16 +151,19 @@ public class SkillCoinsCommand extends BaseCommand {
     public void onCheck(CommandSender sender, String playerName) {
         OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
         if (target == null || !target.hasPlayedBefore()) {
-            sender.sendMessage(ChatColor.RED + "Player not found!");
+            sender.sendMessage(plugin.getMsg(SkillCoinsMessage.PLAYER_NOT_FOUND, plugin.getDefaultLanguage()));
             return;
         }
         
         double coins = plugin.getSkillCoinsEconomy().getBalance(target.getUniqueId(), CurrencyType.COINS);
         double tokens = plugin.getSkillCoinsEconomy().getBalance(target.getUniqueId(), CurrencyType.TOKENS);
         
-        sender.sendMessage(ChatColor.GOLD + "━━━━━━━ " + ChatColor.YELLOW + playerName + "'s Balance" + ChatColor.GOLD + " ━━━━━━━");
-        sender.sendMessage(ChatColor.YELLOW + "⛃: " + ChatColor.WHITE + String.format("%.2f", coins));
-        sender.sendMessage(ChatColor.AQUA + "🎟: " + ChatColor.WHITE + String.format("%.2f", tokens));
-        sender.sendMessage(ChatColor.GOLD + "━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        sender.sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.BALANCE_OTHER_HEADER, plugin.getDefaultLanguage()),
+                "{player}", playerName));
+        sender.sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.BALANCE_COINS, plugin.getDefaultLanguage()),
+                "{coins}", String.format("%.2f", coins)));
+        sender.sendMessage(TextUtil.replace(plugin.getMsg(SkillCoinsMessage.BALANCE_TOKENS, plugin.getDefaultLanguage()),
+                "{tokens}", String.format("%.2f", tokens)));
+        sender.sendMessage(plugin.getMsg(SkillCoinsMessage.BALANCE_FOOTER, plugin.getDefaultLanguage()));
     }
 }

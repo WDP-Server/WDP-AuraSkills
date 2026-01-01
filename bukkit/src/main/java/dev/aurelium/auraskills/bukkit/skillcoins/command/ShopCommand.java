@@ -7,7 +7,7 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.bukkit.skillcoins.menu.ShopMainMenu;
-import org.bukkit.ChatColor;
+import dev.aurelium.auraskills.common.message.type.SkillCoinsMessage;
 import org.bukkit.entity.Player;
 
 @CommandAlias("shop")
@@ -24,12 +24,12 @@ public class ShopCommand extends BaseCommand {
     @Description("Open the SkillCoins shop")
     public void onShop(Player player) {
         if (plugin.getShopLoader() == null || plugin.getSkillCoinsEconomy() == null) {
-            player.sendMessage(ChatColor.RED + "The shop is not available right now.");
+            player.sendMessage(plugin.getMsg(SkillCoinsMessage.SHOP_UNAVAILABLE, plugin.getDefaultLanguage()));
             return;
         }
         
         if (plugin.getShopLoader().getSections().isEmpty()) {
-            player.sendMessage(ChatColor.RED + "The shop has no sections loaded.");
+            player.sendMessage(plugin.getMsg(SkillCoinsMessage.SHOP_NO_SECTIONS, plugin.getDefaultLanguage()));
             return;
         }
         
