@@ -35,7 +35,7 @@ public class TokenExchangeMenu {
     private static final String MENU_TITLE = "§a🎟" + ChatColor.DARK_GRAY + " Token Exchange";
     private static final String PRESET_TITLE = "§e⚡" + ChatColor.DARK_GRAY + " Quick Select Amount";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0.00");
-    private static final int COINS_PER_TOKEN = 100; // Base rate: 100 coins = 1 token
+    private static final int COINS_PER_TOKEN = 500; // Base rate: 500 coins = 1 token (premium currency)
     private static final int MIN_QUANTITY = 1;
     private static final int MAX_QUANTITY = 1000;
     

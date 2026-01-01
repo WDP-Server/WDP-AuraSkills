@@ -12,7 +12,17 @@ import org.bukkit.event.Listener;
 /**
  * Listener that rewards players with Skill Tokens AND SkillCoins when they level up skills
  * 
- * Rewards are shown in the level lore and in chat messages
+ * ECONOMY BALANCE V2:
+ * - Coins are awarded ONLY every 5 levels (makes each reward feel meaningful)
+ * - Tokens are awarded ONLY every 10 levels (premium currency, 1 token = 500 coins worth)
+ * - Scaling rewards encourage continued progression without being overwhelming
+ * 
+ * Expected total per skill (100 levels):
+ * - Coins: 2,670 coins (from 20 payouts at levels 5,10,15...100)
+ * - Tokens: 32 tokens (from 10 payouts at levels 10,20,30...100)
+ * 
+ * With 11 skills, a maxed player earns: ~29,370 coins, ~352 tokens
+ * This ensures long-term goals while keeping early game accessible
  */
 public class TokenRewardListener implements Listener {
 
@@ -31,114 +41,148 @@ public class TokenRewardListener implements Listener {
             return;
         }
 
-        // Calculate token reward based on level (scaled rewards)
+        // Calculate rewards - only given at milestone levels
         int tokenReward = calculateTokenReward(level);
-        
-        // Calculate SkillCoins reward based on level
         int coinsReward = calculateCoinsReward(level);
         
-        // Award tokens
-        plugin.getSkillCoinsEconomy().addBalance(player.getUniqueId(), CurrencyType.TOKENS, tokenReward);
+        // Award tokens only at milestone levels (every 10)
+        if (tokenReward > 0) {
+            plugin.getSkillCoinsEconomy().addBalance(player.getUniqueId(), CurrencyType.TOKENS, tokenReward);
+        }
         
-        // Award coins only if coinsReward > 0 (scaled payout on multiples of 5)
+        // Award coins only at milestone levels (every 5)
         if (coinsReward > 0) {
             plugin.getSkillCoinsEconomy().addBalance(player.getUniqueId(), CurrencyType.COINS, coinsReward);
         }
         
         // Record transient reward so the default AuraSkills level-up message can include it
-        // (This avoids duplicate custom messages and ensures consistent formatting)
         dev.aurelium.auraskills.common.skillcoins.TokenCoinRewardCache.put(player.getUniqueId(), event.getSkill().toString(), level, coinsReward, tokenReward);
-        
-        // Note: we intentionally do not send a separate chat message or play a sound here
-        // The default AuraSkills LevelUpMessenger will display the rewards in the main level-up chat/title.
     }
 
     /**
      * Calculate token reward based on level
-     * Higher levels = more tokens
+     * ONLY given every 10 levels (premium currency)
+     * 
+     * Token rewards by level:
+     * - Level 10: 1 token
+     * - Level 20: 1 token
+     * - Level 30: 2 tokens
+     * - Level 40: 2 tokens
+     * - Level 50: 3 tokens (milestone bonus)
+     * - Level 60: 3 tokens
+     * - Level 70: 4 tokens
+     * - Level 80: 4 tokens
+     * - Level 90: 5 tokens
+     * - Level 100: 7 tokens (max level bonus)
+     * Total per skill: 32 tokens
      */
     private int calculateTokenReward(int level) {
-        if (level <= 10) {
-            return 1; // Levels 1-10: 1 token
-        } else if (level <= 25) {
-            return 2; // Levels 11-25: 2 tokens
-        } else if (level <= 50) {
-            return 3; // Levels 26-50: 3 tokens
-        } else if (level <= 75) {
-            return 5; // Levels 51-75: 5 tokens
-        } else if (level <= 90) {
-            return 7; // Levels 76-90: 7 tokens
+        // Only award tokens at multiples of 10
+        if (level % 10 != 0) {
+            return 0;
+        }
+        
+        if (level == 100) {
+            return 7; // Max level bonus
+        } else if (level >= 90) {
+            return 5;
+        } else if (level >= 70) {
+            return 4;
+        } else if (level >= 50) {
+            return 3;
+        } else if (level >= 30) {
+            return 2;
         } else {
-            return 10; // Levels 91+: 10 tokens
+            return 1; // Levels 10, 20
         }
     }
     
     /**
      * Calculate SkillCoins reward based on level
-     * Scales with level for progression but only pays out on multiples of 5
+     * ONLY given every 5 levels
+     * 
+     * Coin rewards by level tier:
+     * - Levels 5-10: 15, 20 coins (35 total)
+     * - Levels 15-25: 30, 35, 40 coins (105 total)
+     * - Levels 30-50: 50, 60, 70, 80, 90 coins (350 total)
+     * - Levels 55-75: 110, 130, 150, 170, 190 coins (750 total)
+     * - Levels 80-90: 220, 250, 280 coins (750 total)
+     * - Levels 95-100: 320, 360 coins (680 total)
+     * Total per skill: 2,670 coins
      */
     private int calculateCoinsReward(int level) {
-        // Only give coins on multiples of 5 (scaled option)
+        // Only give coins on multiples of 5
         if (level % 5 != 0) {
             return 0;
         }
-        // Base reward of 10 coins, scaling up with level
-        int baseReward = 10;
         
+        // Scaled rewards that feel meaningful but not overwhelming
         if (level <= 10) {
-            return baseReward + (level * 2); // 12-30 coins
+            // Early game: 15, 20, (total 35 for first 10 levels)
+            return 10 + (level / 5) * 5; // 15 at 5, 20 at 10
         } else if (level <= 25) {
-            return baseReward + 20 + ((level - 10) * 3); // 33-65 coins
+            // Establishing: 30, 35, 40 (total 105 for 15-25)
+            return 25 + ((level - 10) / 5) * 5; // 30, 35, 40
         } else if (level <= 50) {
-            return baseReward + 65 + ((level - 25) * 4); // 79-165 coins
+            // Mid game: 50, 60, 70, 80, 90 (total 350 for 30-50)
+            return 40 + ((level - 25) / 5) * 10; // 50, 60, 70, 80, 90
         } else if (level <= 75) {
-            return baseReward + 165 + ((level - 50) * 5); // 180-290 coins
+            // Late game: 110, 130, 150, 170, 190 (total 750 for 55-75)
+            return 90 + ((level - 50) / 5) * 20; // 110, 130, 150, 170, 190
         } else if (level <= 90) {
-            return baseReward + 290 + ((level - 75) * 7); // 307-395 coins
+            // End game: 220, 250, 280 (total 750 for 80-90)
+            return 190 + ((level - 75) / 5) * 30; // 220, 250, 280
         } else {
-            return baseReward + 395 + ((level - 90) * 10); // 405+ coins
+            // Master tier: 320, 360 (total 680 for 95-100)
+            return 280 + ((level - 90) / 5) * 40; // 320 at 95, 360 at 100
         }
     }
     
     /**
      * Get the SkillCoins reward for a specific level
-     * Can be called from other classes to display in lore
+     * Returns 0 for non-milestone levels
      */
     public static int getCoinsRewardForLevel(int level) {
-        int baseReward = 10;
+        if (level % 5 != 0) {
+            return 0;
+        }
         
         if (level <= 10) {
-            return baseReward + (level * 2);
+            return 10 + (level / 5) * 5;
         } else if (level <= 25) {
-            return baseReward + 20 + ((level - 10) * 3);
+            return 25 + ((level - 10) / 5) * 5;
         } else if (level <= 50) {
-            return baseReward + 65 + ((level - 25) * 4);
+            return 40 + ((level - 25) / 5) * 10;
         } else if (level <= 75) {
-            return baseReward + 165 + ((level - 50) * 5);
+            return 90 + ((level - 50) / 5) * 20;
         } else if (level <= 90) {
-            return baseReward + 290 + ((level - 75) * 7);
+            return 190 + ((level - 75) / 5) * 30;
         } else {
-            return baseReward + 395 + ((level - 90) * 10);
+            return 280 + ((level - 90) / 5) * 40;
         }
     }
     
     /**
      * Get the Token reward for a specific level
-     * Can be called from other classes to display in lore
+     * Returns 0 for non-milestone levels
      */
     public static int getTokenRewardForLevel(int level) {
-        if (level <= 10) {
-            return 1;
-        } else if (level <= 25) {
-            return 2;
-        } else if (level <= 50) {
-            return 3;
-        } else if (level <= 75) {
-            return 5;
-        } else if (level <= 90) {
+        if (level % 10 != 0) {
+            return 0;
+        }
+        
+        if (level == 100) {
             return 7;
+        } else if (level >= 90) {
+            return 5;
+        } else if (level >= 70) {
+            return 4;
+        } else if (level >= 50) {
+            return 3;
+        } else if (level >= 30) {
+            return 2;
         } else {
-            return 10;
+            return 1;
         }
     }
 }
