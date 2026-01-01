@@ -1,168 +1,161 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                       REDSTONE SHOP - BALANCED ECONOMY V2                     ║
+# ╠══════════════════════════════════════════════════════════════════════════════╣
+# ║ Pricing Philosophy:                                                           ║
+# ║ - Basic components: Very cheap, encourage building                            ║
+# ║ - Logic gates: Based on material cost                                         ║
+# ║ - Pistons/Observers: Moderate price, iron-based                               ║
+# ║ - Rails: Cheap enough to build tracks                                         ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 pages:
   page1:
     items:
-      # Basic Redstone
+      # ═══════ BASIC REDSTONE ═══════
       '1':
         material: REDSTONE
-        buy: 10
-        sell: 2.5
+        buy: 3
+        sell: 0
       '2':
         material: REDSTONE_BLOCK
-        buy: 90
-        sell: 22
+        buy: 25
+        sell: 7
       '3':
         material: REDSTONE_TORCH
-        buy: 8
-        sell: 2
+        buy: 4
+        sell: 1
       '4':
         material: REDSTONE_LAMP
-        buy: 25
+        buy: 20
         sell: 6
       '5':
         material: LEVER
-        buy: 5
-        sell: 1
+        buy: 2
+        sell: 0
       '6':
         material: STONE_BUTTON
-        buy: 3
-        sell: 0.75
+        buy: 2
+        sell: 0
+      
+      # ═══════ PRESSURE PLATES ═══════
       '7':
-        material: OAK_BUTTON
+        material: STONE_PRESSURE_PLATE
         buy: 3
-        sell: 0.75
+        sell: 0
       '8':
         material: OAK_PRESSURE_PLATE
-        buy: 5
-        sell: 1
+        buy: 3
+        sell: 0
       '9':
-        material: STONE_PRESSURE_PLATE
-        buy: 5
-        sell: 1
-      '10':
         material: HEAVY_WEIGHTED_PRESSURE_PLATE
-        buy: 15
-        sell: 4
-      '11':
-        material: LIGHT_WEIGHTED_PRESSURE_PLATE
-        buy: 15
-        sell: 4
-      
-      # Logic Components
-      '12':
-        material: REPEATER
-        buy: 20
-        sell: 5
-      '13':
-        material: COMPARATOR
         buy: 25
-        sell: 6
-      '14':
-        material: OBSERVER
-        buy: 40
-        sell: 10
-      '15':
-        material: DAYLIGHT_DETECTOR
-        buy: 30
         sell: 7
+      '10':
+        material: LIGHT_WEIGHTED_PRESSURE_PLATE
+        buy: 30
+        sell: 9
+      
+      # ═══════ PISTONS & OBSERVERS ═══════
+      '11':
+        material: PISTON
+        buy: 25
+        sell: 7
+      '12':
+        material: STICKY_PISTON
+        buy: 35
+        sell: 10
+      '13':
+        material: OBSERVER
+        buy: 30
+        sell: 9
+      '14':
+        material: SLIME_BLOCK
+        buy: 65
+        sell: 19
+      '15':
+        material: HONEY_BLOCK
+        buy: 50
+        sell: 15
+      
+      # ═══════ LOGIC COMPONENTS ═══════
       '16':
-        material: TRIPWIRE_HOOK
+        material: REPEATER
         buy: 15
         sell: 4
       '17':
-        material: TARGET
-        buy: 20
-        sell: 5
-      
-      # Pistons
+        material: COMPARATOR
+        buy: 25
+        sell: 7
       '18':
-        material: PISTON
-        buy: 45
-        sell: 11
-      '19':
-        material: STICKY_PISTON
-        buy: 60
-        sell: 15
-      '20':
-        material: SLIME_BLOCK
-        buy: 40
-        sell: 10
-      '21':
-        material: HONEY_BLOCK
+        material: TARGET
         buy: 30
-        sell: 7
-      
-      # Dispensers/Droppers
-      '22':
-        material: DISPENSER
-        buy: 40
-        sell: 10
-      '23':
-        material: DROPPER
-        buy: 35
         sell: 9
-      '24':
-        material: HOPPER
-        buy: 80
-        sell: 20
-      
-      # Doors & Gates
-      '25':
-        material: OAK_DOOR
-        buy: 10
-        sell: 2.5
-      '26':
-        material: IRON_DOOR
-        buy: 30
-        sell: 7
-      '27':
-        material: OAK_TRAPDOOR
+      '19':
+        material: DAYLIGHT_DETECTOR
+        buy: 35
+        sell: 10
+      '20':
+        material: TRIPWIRE_HOOK
         buy: 8
         sell: 2
-      '28':
+      
+      # ═══════ DOORS & GATES ═══════
+      '21':
+        material: IRON_DOOR
+        buy: 20
+        sell: 6
+      '22':
         material: IRON_TRAPDOOR
         buy: 25
-        sell: 6
-      '29':
+        sell: 7
+      '23':
         material: OAK_FENCE_GATE
-        buy: 10
-        sell: 2.5
-      
-      # Rails
-      '30':
-        material: RAIL
         buy: 5
         sell: 1
-      '31':
+      
+      # ═══════ RAILS & MINECARTS ═══════
+      '24':
+        material: RAIL
+        buy: 3
+        sell: 0
+      '25':
         material: POWERED_RAIL
         buy: 15
         sell: 4
-      '32':
+      '26':
         material: DETECTOR_RAIL
-        buy: 10
-        sell: 2.5
-      '33':
+        buy: 12
+        sell: 3
+      '27':
         material: ACTIVATOR_RAIL
-        buy: 10
-        sell: 2.5
-      '34':
+        buy: 12
+        sell: 3
+      '28':
         material: MINECART
-        buy: 60
-        sell: 15
-      
-      # Special
-      '35':
-        material: TNT
-        buy: 50
-        sell: 12
-      '36':
-        material: NOTE_BLOCK
         buy: 30
+        sell: 9
+      '29':
+        material: CHEST_MINECART
+        buy: 38
+        sell: 11
+      '30':
+        material: HOPPER_MINECART
+        buy: 55
+        sell: 16
+      
+      # ═══════ DISPENSERS & HOPPERS ═══════
+      '31':
+        material: DISPENSER
+        buy: 25
         sell: 7
-      '37':
-        material: JUKEBOX
-        buy: 50
-        sell: 12
-      '38':
-        material: LECTERN
-        buy: 50
-        sell: 12
+      '32':
+        material: DROPPER
+        buy: 20
+        sell: 6
+      '33':
+        material: HOPPER
+        buy: 45
+        sell: 13
+      '34':
+        material: TNT
+        buy: 35
+        sell: 10
