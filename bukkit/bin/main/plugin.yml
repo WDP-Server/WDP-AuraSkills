@@ -20,6 +20,16 @@ api-version: '1.13'
 folia-supported: true
 prefix: AuraSkills
 
+commands:
+  shop:
+    description: Open the SkillCoins shop
+    usage: /<command>
+    permission: auraskills.command.shop
+  skillcoins:
+    description: Manage SkillCoins currency
+    usage: /<command> <give|take|set|balance> [player] [amount]
+    permission: auraskills.command.skillcoins
+
 permissions:
   auraskills.*:
     description: Permission to use all commands from AuraSkills
@@ -206,6 +216,8 @@ permissions:
     default: op
   auraskills.command.shop:
     default: true
+  auraskills.command.skillcoins:
+    default: op
   auraskills.command.manaability.resetcooldown:
     default: op
   auraskills.command.jobs:
