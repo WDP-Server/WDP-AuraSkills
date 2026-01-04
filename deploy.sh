@@ -198,19 +198,7 @@ if [[ ! -d "$PLUGINS_DIR" ]]; then
 fi
 
 ################################################################################
-# STEP 3: Backup Current Plugin
-################################################################################
-if [[ -f "${PLUGINS_DIR}/${JAR_NAME}" ]]; then
-    log_step "Backing up current plugin..."
-    BACKUP_DIR="${SERVER_DIR}/backups/auraskills"
-    mkdir -p "$BACKUP_DIR"
-    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-    cp "${PLUGINS_DIR}/${JAR_NAME}" "${BACKUP_DIR}/${JAR_NAME}.${TIMESTAMP}.bak"
-    log_success "Backup created: ${JAR_NAME}.${TIMESTAMP}.bak"
-fi
-
-################################################################################
-# STEP 4: Clean Old Installation
+# STEP 3: Clean Old Installation
 ################################################################################
 log_step "Removing old plugin files..."
 
@@ -233,7 +221,7 @@ if [[ -f "${PLUGINS_DIR}/${JAR_NAME}" ]]; then
 fi
 
 ################################################################################
-# STEP 5: Deploy New Plugin
+# STEP 4: Deploy New Plugin
 ################################################################################
 log_step "Deploying new plugin..."
 
@@ -258,7 +246,7 @@ else
 fi
 
 ################################################################################
-# STEP 6: Start Container
+# STEP 5: Start Container
 ################################################################################
 log_step "Starting Minecraft server container..."
 
@@ -297,7 +285,7 @@ if ! is_running; then
 fi
 
 ################################################################################
-# STEP 7: Monitor Server Startup
+# STEP 6: Monitor Server Startup
 ################################################################################
 log_step "Monitoring server startup..."
 
