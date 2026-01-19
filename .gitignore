@@ -1,57 +1,55 @@
-# User-specific stuff
-.idea/
+# ===========================================
+# AuraSkills-Coins .gitignore (Gradle + IntelliJ)
+# ===========================================
 
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDEs
+.idea/
 *.iml
 *.ipr
 *.iws
+.vscode/
+*.swp
+*~
 
-# IntelliJ
-out/
-
-# Compiled class file
+# Java compiled files
 *.class
 
-# Package Files #
+# JAR files (except gradle wrapper)
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
 
-target/
+# Eclipse
+.project
+.classpath
+.settings/
 
-.gradle/
-build/
+# Module files (Eclipse/IntelliJ)
+*.orig
+*.rej
 
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
 
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-.flattened-pom.xml
-
-build.xml
-
-bukkit/run/
-
-htmlReport/
-
-# EconomyShopGUI (not part of this project)
-EconomyShopGUI/
-
-# Deployment backups
-*.jar.*.bak
-
-# Log files
+# Logs
 *.log
 
 # Temporary files
 *.tmp
 *.bak
-*.swp
-*~
+tmp/
 
-# Mac
-.DS_Store
+# Build outputs per module
+bukkit/build/
+api/build/
+api-bukkit/build/
+common/build/
+
+# EconomyShopGUI (not part of this project)
+EconomyShopGUI/
