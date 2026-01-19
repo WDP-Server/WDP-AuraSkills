@@ -1,329 +1,268 @@
 # ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                    ENCHANTMENTS SHOP - FAIR PRICES                             ║
+# ║                    ENCHANTMENTS SHOP - EXACT PRICES                           ║
 # ╠══════════════════════════════════════════════════════════════════════════════╣
 # ║ ALL ITEMS PURCHASABLE WITH COINS ONLY!                                        ║
-# ║ Prices are balanced for fair economy progression                              ║
+# ║ Prices are EXACT as specified - DO NOT ROUND!                                 ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 pages:
   page1:
     items:
-      # Protection Enchantments
       '1':
         material: ENCHANTED_BOOK
+        buy: 160
+        sell: 40
         enchantments:
-          - PROTECTION:1
-        buy: 75
-        sell: 23
+        - WATER_WORKER:1
       '2':
         material: ENCHANTED_BOOK
+        buy: 1944.81
+        sell: 486.21
         enchantments:
-          - PROTECTION:2
-        buy: 150
-        sell: 45
+        - DAMAGE_ARTHROPODS:5
       '3':
         material: ENCHANTED_BOOK
+        buy: 200
+        sell: 50
         enchantments:
-          - PROTECTION:3
-        buy: 300
-        sell: 90
+        - BINDING_CURSE:1
       '4':
         material: ENCHANTED_BOOK
+        buy: 1852.2
+        sell: 463.05
         enchantments:
-          - PROTECTION:4
-        buy: 600
-        sell: 180
-      
-      # Specific Protection
+        - BREACH:4
       '5':
         material: ENCHANTED_BOOK
+        buy: 1481.76
+        sell: 370.44
         enchantments:
-          - FIRE_PROTECTION:4
-        buy: 450
-        sell: 135
+        - PROTECTION_EXPLOSIONS:4
       '6':
         material: ENCHANTED_BOOK
+        buy: 200
+        sell: 50
         enchantments:
-          - BLAST_PROTECTION:4
-        buy: 450
-        sell: 135
+        - CHANNELING:1
       '7':
         material: ENCHANTED_BOOK
+        buy: 3889.62
+        sell: 972.41
         enchantments:
-          - PROJECTILE_PROTECTION:4
-        buy: 450
-        sell: 135
-      
-      # Weapon Enchantments - Sharpness
+        - DENSITY:5
       '8':
         material: ENCHANTED_BOOK
+        buy: 705.6
+        sell: 176.4
         enchantments:
-          - SHARPNESS:1
-        buy: 60
-        sell: 18
+        - DEPTH_STRIDER:3
       '9':
         material: ENCHANTED_BOOK
+        buy: 972.41
+        sell: 243.11
         enchantments:
-          - SHARPNESS:3
-        buy: 225
-        sell: 68
+        - DIG_SPEED:5
       '10':
         material: ENCHANTED_BOOK
+        buy: 926.1
+        sell: 231.53
         enchantments:
-          - SHARPNESS:5
-        buy: 525
-        sell: 158
-      
-      # Special Weapon Enchantments
+        - PROTECTION_FALL:4
       '11':
         material: ENCHANTED_BOOK
+        buy: 336
+        sell: 84
         enchantments:
-          - SMITE:5
-        buy: 450
-        sell: 135
+        - FIRE_ASPECT:2
       '12':
         material: ENCHANTED_BOOK
+        buy: 926.1
+        sell: 231.53
         enchantments:
-          - BANE_OF_ARTHROPODS:5
-        buy: 375
-        sell: 113
+        - PROTECTION_FIRE:4
       '13':
         material: ENCHANTED_BOOK
+        buy: 160
+        sell: 40
         enchantments:
-          - KNOCKBACK:2
-        buy: 150
-        sell: 45
+        - ARROW_FIRE:1
       '14':
         material: ENCHANTED_BOOK
+        buy: 705.6
+        sell: 176.4
         enchantments:
-          - FIRE_ASPECT:2
-        buy: 375
-        sell: 113
+        - LOOT_BONUS_BLOCKS:3
       '15':
         material: ENCHANTED_BOOK
+        buy: 336
+        sell: 84
         enchantments:
-          - LOOTING:3
-        buy: 750
-        sell: 225
+        - FROST_WALKER:2
       '16':
         material: ENCHANTED_BOOK
+        buy: 3111.7
+        sell: 777.93
         enchantments:
-          - SWEEPING_EDGE:3
-        buy: 300
-        sell: 90
-      
-      # Tool Enchantments - Efficiency
+        - IMPALING:5
       '17':
         material: ENCHANTED_BOOK
+        buy: 200
+        sell: 50
         enchantments:
-          - EFFICIENCY:1
-        buy: 45
-        sell: 14
+        - ARROW_INFINITE:1
       '18':
         material: ENCHANTED_BOOK
+        buy: 210
+        sell: 52.5
         enchantments:
-          - EFFICIENCY:3
-        buy: 180
-        sell: 54
+        - KNOCKBACK:2
       '19':
         material: ENCHANTED_BOOK
+        buy: 705.6
+        sell: 176.4
         enchantments:
-          - EFFICIENCY:5
-        buy: 450
-        sell: 135
-      
-      # Fortune & Silk Touch
+        - LOOT_BONUS_MOBS:3
       '20':
         material: ENCHANTED_BOOK
+        buy: 441
+        sell: 110.25
         enchantments:
-          - FORTUNE:1
-        buy: 150
-        sell: 45
+        - LOYALTY:3
       '21':
         material: ENCHANTED_BOOK
+        buy: 705.6
+        sell: 176.4
         enchantments:
-          - FORTUNE:2
-        buy: 375
-        sell: 113
+        - LUCK:3
       '22':
         material: ENCHANTED_BOOK
+        buy: 705.6
+        sell: 176.4
         enchantments:
-          - FORTUNE:3
-        buy: 900
-        sell: 270
+        - LURE:3
       '23':
         material: ENCHANTED_BOOK
+        buy: 160
+        sell: 40
         enchantments:
-          - SILK_TOUCH:1
-        buy: 600
-        sell: 180
-      
-      # Bow Enchantments
+        - MENDING:1
       '24':
         material: ENCHANTED_BOOK
+        buy: 160
+        sell: 40
         enchantments:
-          - POWER:3
-        buy: 225
-        sell: 68
+        - MULTISHOT:1
       '25':
         material: ENCHANTED_BOOK
+        buy: 463.05
+        sell: 115.77
         enchantments:
-          - POWER:5
-        buy: 525
-        sell: 158
+        - PIERCING:4
       '26':
         material: ENCHANTED_BOOK
+        buy: 972.41
+        sell: 243.11
         enchantments:
-          - PUNCH:2
-        buy: 225
-        sell: 68
+        - ARROW_DAMAGE:5
       '27':
         material: ENCHANTED_BOOK
+        buy: 926.1
+        sell: 231.53
         enchantments:
-          - FLAME:1
-        buy: 300
-        sell: 90
+        - PROTECTION_PROJECTILE:4
       '28':
         material: ENCHANTED_BOOK
+        buy: 463.05
+        sell: 115.77
         enchantments:
-          - INFINITY:1
-        buy: 750
-        sell: 225
-      
-      # Utility Enchantments
+        - PROTECTION_ENVIRONMENTAL:4
       '29':
         material: ENCHANTED_BOOK
+        buy: 336
+        sell: 84
         enchantments:
-          - UNBREAKING:1
-        buy: 75
-        sell: 23
+        - ARROW_KNOCKBACK:2
       '30':
         material: ENCHANTED_BOOK
+        buy: 441
+        sell: 110.25
         enchantments:
-          - UNBREAKING:3
-        buy: 375
-        sell: 113
+        - QUICK_CHARGE:3
       '31':
         material: ENCHANTED_BOOK
+        buy: 705.6
+        sell: 176.4
         enchantments:
-          - MENDING:1
-        buy: 1200
-        sell: 360
-      
-      # Armor Special Enchantments
+        - OXYGEN:3
       '32':
         material: ENCHANTED_BOOK
+        buy: 705.6
+        sell: 176.4
         enchantments:
-          - THORNS:3
-        buy: 450
-        sell: 135
+        - RIPTIDE:3
       '33':
         material: ENCHANTED_BOOK
+        buy: 972.41
+        sell: 243.11
         enchantments:
-          - FEATHER_FALLING:4
-        buy: 375
-        sell: 113
+        - DAMAGE_ALL:5
       '34':
         material: ENCHANTED_BOOK
+        buy: 200
+        sell: 50
         enchantments:
-          - RESPIRATION:3
-        buy: 225
-        sell: 68
+        - SILK_TOUCH:1
       '35':
         material: ENCHANTED_BOOK
+        buy: 1944.81
+        sell: 486.21
         enchantments:
-          - AQUA_AFFINITY:1
-        buy: 150
-        sell: 45
+        - DAMAGE_UNDEAD:5
       '36':
         material: ENCHANTED_BOOK
+        buy: 1102.5
+        sell: 275.63
         enchantments:
-          - DEPTH_STRIDER:3
-        buy: 300
-        sell: 90
+        - SOUL_SPEED:3
       '37':
         material: ENCHANTED_BOOK
+        buy: 705.6
+        sell: 176.4
         enchantments:
-          - FROST_WALKER:2
-        buy: 375
-        sell: 113
+        - SWEEPING_EDGE:3
       '38':
         material: ENCHANTED_BOOK
+        buy: 275.63
+        sell: 68.91
         enchantments:
-          - SOUL_SPEED:3
-        buy: 525
-        sell: 158
-      
-      # Fishing & Misc
+        - SWIFT_SNEAK:3
       '39':
         material: ENCHANTED_BOOK
+        buy: 882
+        sell: 220.5
         enchantments:
-          - LUCK_OF_THE_SEA:3
-        buy: 450
-        sell: 135
+        - THORNS:3
       '40':
         material: ENCHANTED_BOOK
+        buy: 441
+        sell: 110.25
         enchantments:
-          - LURE:3
-        buy: 300
-        sell: 90
-      
-      # Trident Enchantments
+        - DURABILITY:3
       '41':
         material: ENCHANTED_BOOK
+        buy: 200
+        sell: 50
         enchantments:
-          - LOYALTY:3
-        buy: 375
-        sell: 113
+        - VANISHING_CURSE:1
       '42':
         material: ENCHANTED_BOOK
+        buy: 20255
+        sell: 6063.75
         enchantments:
-          - RIPTIDE:3
-        buy: 525
-        sell: 158
+        - WIND_BURST:3
       '43':
         material: ENCHANTED_BOOK
+        buy: 700
+        sell: 100
         enchantments:
-          - CHANNELING:1
-        buy: 450
-        sell: 135
-      '44':
-        material: ENCHANTED_BOOK
-        enchantments:
-          - IMPALING:5
-        buy: 450
-        sell: 135
-      
-      # Crossbow Enchantments
-      '45':
-        material: ENCHANTED_BOOK
-        enchantments:
-          - QUICK_CHARGE:3
-        buy: 375
-        sell: 113
-      '46':
-        material: ENCHANTED_BOOK
-        enchantments:
-          - MULTISHOT:1
-        buy: 450
-        sell: 135
-      '47':
-        material: ENCHANTED_BOOK
-        enchantments:
-          - PIERCING:4
-        buy: 375
-        sell: 113
-      
-      # Curse Enchantments (Cheap for fun)
-      '48':
-        material: ENCHANTED_BOOK
-        enchantments:
-          - VANISHING_CURSE:1
-        buy: 8
-        sell: 3
-      '49':
-        material: ENCHANTED_BOOK
-        enchantments:
-          - BINDING_CURSE:1
-        buy: 8
-        sell: 3
+        - VEINMINE:1

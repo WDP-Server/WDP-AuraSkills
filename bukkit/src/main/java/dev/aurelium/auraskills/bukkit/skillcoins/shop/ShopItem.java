@@ -171,6 +171,21 @@ public class ShopItem {
                     for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
                         meta.addStoredEnchant(entry.getKey(), entry.getValue(), true);
                     }
+                    String enchantName = getEnchantmentDisplayName();
+                    meta.setDisplayName(enchantName);
+
+                    java.util.List<String> lore = new java.util.ArrayList<>();
+                    lore.add("");
+                    lore.add("§7Enchantment: §f" + enchantName);
+                    lore.add("§7Level: §f" + enchantments.values().iterator().next());
+                    lore.add("");
+                    lore.add("§aBuy: §f" + String.format("%,.2f", buyPrice) + " Coins");
+                    lore.add("");
+                    lore.add("§6Sell: §f" + String.format("%,.2f", sellPrice) + " Coins");
+                    lore.add("");
+                    lore.add("§7Left-click to buy");
+                    meta.setLore(lore);
+
                     item.setItemMeta(meta);
                 }
             } else {
@@ -179,12 +194,49 @@ public class ShopItem {
                     for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
                         meta.addEnchant(entry.getKey(), entry.getValue(), true);
                     }
+                    String enchantName = getEnchantmentDisplayName();
+                    meta.setDisplayName(enchantName);
+
+                    java.util.List<String> lore = new java.util.ArrayList<>();
+                    lore.add("");
+                    lore.add("§7Enchantment: §f" + enchantName);
+                    lore.add("§7Level: §f" + enchantments.values().iterator().next());
+                    lore.add("");
+                    lore.add("§aBuy: §f" + String.format("%,.2f", buyPrice) + " Coins");
+                    lore.add("");
+                    lore.add("§6Sell: §f" + String.format("%,.2f", sellPrice) + " Coins");
+                    lore.add("");
+                    lore.add("§7Left-click to buy");
+                    meta.setLore(lore);
+
                     item.setItemMeta(meta);
                 }
             }
         }
 
         return item;
+    }
+
+    private String getEnchantmentDisplayName() {
+        if (enchantments.isEmpty()) {
+            return "Enchanted Book";
+        }
+        Enchantment ench = enchantments.keySet().iterator().next();
+        String key = ench.getKey().getKey();
+        return formatEnchantmentName(key);
+    }
+
+    private String formatEnchantmentName(String key) {
+        String[] words = key.split("_");
+        StringBuilder result = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                result.append(Character.toUpperCase(word.charAt(0)))
+                      .append(word.substring(1).toLowerCase())
+                      .append(" ");
+            }
+        }
+        return result.toString().trim();
     }
 
     private ItemStack createSpawnerItemStack(int amount) {
