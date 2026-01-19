@@ -30,6 +30,7 @@ public class TierSelectionMenu {
 
     private final Map<ShopItem.SpawnerTier, Material> tierMaterials = new EnumMap<>(ShopItem.SpawnerTier.class);
     private final Map<ShopItem.SpawnerTier, String> tierColors = new EnumMap<>(ShopItem.SpawnerTier.class);
+    private final int[] tierSlots = {11, 13, 15, 17};
 
     public TierSelectionMenu(AuraSkills plugin, EconomyProvider economy) {
         this.plugin = plugin;
@@ -52,7 +53,7 @@ public class TierSelectionMenu {
         playerSelections.put(player.getUniqueId(), entityType);
 
         try {
-            Inventory inv = Bukkit.createInventory(null, 27, menuTitle);
+            Inventory inv = Bukkit.createInventory(null, 36, menuTitle);
 
             fillBorder(inv);
             addEntityDisplay(inv, entityType);
@@ -60,6 +61,11 @@ public class TierSelectionMenu {
             addBackButton(inv);
 
             player.openInventory(inv);
+
+            MenuManager manager = MenuManager.getInstance(plugin);
+            if (manager != null) {
+                manager.registerTierMenu(player, this);
+            }
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error opening tier selection menu", e);
             player.sendMessage(ChatColor.RED + "An error occurred!");
@@ -74,8 +80,8 @@ public class TierSelectionMenu {
             border.setItemMeta(meta);
         }
 
-        for (int i = 0; i < 27; i++) {
-            if (i < 9 || i >= 18) {
+        for (int i = 0; i < 36; i++) {
+            if (i < 9 || i >= 27) {
                 inv.setItem(i, border);
             }
         }
@@ -109,8 +115,10 @@ public class TierSelectionMenu {
     private void addTierButtons(Inventory inv, EntityType entityType) {
         ShopItem.SpawnerTier[] tiers = ShopItem.SpawnerTier.values();
 
-        int slot = 9;
-        for (ShopItem.SpawnerTier tier : tiers) {
+        for (int i = 0; i < tiers.length; i++) {
+            ShopItem.SpawnerTier tier = tiers[i];
+            int slot = tierSlots[i];
+
             ItemStack tierItem = new ItemStack(tierMaterials.get(tier));
             ItemMeta meta = tierItem.getItemMeta();
             if (meta != null) {
@@ -136,7 +144,6 @@ public class TierSelectionMenu {
                 tierItem.setItemMeta(meta);
             }
             inv.setItem(slot, tierItem);
-            slot++;
         }
     }
 
@@ -159,13 +166,13 @@ public class TierSelectionMenu {
     }
 
     private void addBackButton(Inventory inv) {
-        ItemStack back = new ItemStack(Material.SPYGLASS);
+        ItemStack back = new ItemStack(Material.BARRIER);
         ItemMeta meta = back.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ChatColor.RED + "← Back to Shop");
+            meta.setDisplayName(ChatColor.RED + "← Back");
             back.setItemMeta(meta);
         }
-        inv.setItem(26, back);
+        inv.setItem(27, back);
     }
 
     public void handleClick(InventoryClickEvent event) {
@@ -191,8 +198,9 @@ public class TierSelectionMenu {
             return;
         }
 
-        if (slot == 26) {
-            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
+        if (slot == 27) {
+            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 0.9f);
+            player.closeInventory();
             MenuManager manager = MenuManager.getInstance(plugin);
             if (manager != null) {
                 manager.openMainMenu(player);
@@ -200,15 +208,18 @@ public class TierSelectionMenu {
             return;
         }
 
-        if (slot >= 9 && slot <= 12) {
-            ShopItem.SpawnerTier tier = ShopItem.SpawnerTier.values()[slot - 9];
-            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.2f);
-
-            openConfirmMenu(player, entityType, tier);
+        for (int i = 0; i < tierSlots.length; i++) {
+            if (slot == tierSlots[i]) {
+                ShopItem.SpawnerTier tier = ShopItem.SpawnerTier.values()[i];
+                playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.2f);
+                openConfirmMenu(player, entityType, tier);
+                return;
+            }
         }
     }
 
     private void openConfirmMenu(Player player, EntityType entityType, ShopItem.SpawnerTier tier) {
+        player.closeInventory();
         SpawnerConfirmMenu confirmMenu = new SpawnerConfirmMenu(plugin, economy, entityType, tier);
         confirmMenu.open(player);
     }

@@ -26,6 +26,7 @@ public class MenuManager implements Listener {
     private final Map<UUID, SkillLevelPurchaseMenu> skillMenus = new ConcurrentHashMap<>();
     private final Map<UUID, SellMenu> sellMenus = new ConcurrentHashMap<>();
     private final Map<UUID, LevelBuyMenu> levelBuyMenus = new ConcurrentHashMap<>();
+    private final Map<UUID, TierSelectionMenu> tierMenus = new ConcurrentHashMap<>();
 
     public enum MenuOrigin { SHOP_MAIN, SKILL_SELECT, SKILL_ROAD }
     private final Map<UUID, MenuOrigin> menuOrigins = new ConcurrentHashMap<>();
@@ -141,7 +142,21 @@ public class MenuManager implements Listener {
         skillMenus.remove(playerId);
         sellMenus.remove(playerId);
         levelBuyMenus.remove(playerId);
+        tierMenus.remove(playerId);
         menuOrigins.remove(playerId);
+    }
+
+    public void registerTierMenu(Player player, TierSelectionMenu menu) {
+        if (player == null || menu == null) {
+            plugin.getLogger().warning("Attempted to register null tier menu or player");
+            return;
+        }
+        tierMenus.put(player.getUniqueId(), menu);
+    }
+
+    public void unregisterTierMenu(UUID playerId) {
+        if (playerId == null) return;
+        tierMenus.remove(playerId);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -174,6 +189,7 @@ public class MenuManager implements Listener {
             if (handleSectionMenu(playerId, title, event)) return;
             if (handleMainMenu(playerId, title, event)) return;
             if (handleSellMenu(playerId, title, event)) return;
+            if (handleTierMenu(playerId, title, event)) return;
 
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Unexpected error in menu click handler", e);
@@ -214,6 +230,7 @@ public class MenuManager implements Listener {
             handleSectionClose(playerId, title, event);
             handleMainClose(playerId, title, event);
             handleSellClose(playerId, title, event);
+            handleTierClose(playerId, title, event);
 
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Unexpected error in menu close handler", e);
@@ -402,6 +419,33 @@ public class MenuManager implements Listener {
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error closing sell menu", e);
             sellMenus.remove(playerId);
+        }
+    }
+
+    private boolean handleTierMenu(UUID playerId, String title, InventoryClickEvent event) {
+        try {
+            TierSelectionMenu menu = tierMenus.get(playerId);
+            if (menu != null && menu.isMenuTitle(title)) {
+                menu.handleClick(event);
+                return true;
+            }
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.SEVERE, "Error in tier menu click", e);
+            tierMenus.remove(playerId);
+        }
+        return false;
+    }
+
+    private void handleTierClose(UUID playerId, String title, InventoryCloseEvent event) {
+        try {
+            TierSelectionMenu menu = tierMenus.get(playerId);
+            if (menu != null && menu.isMenuTitle(title)) {
+                menu.handleClose(event);
+                tierMenus.remove(playerId);
+            }
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.WARNING, "Error closing tier menu", e);
+            tierMenus.remove(playerId);
         }
     }
 }

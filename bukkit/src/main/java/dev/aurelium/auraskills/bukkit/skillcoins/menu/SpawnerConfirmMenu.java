@@ -46,13 +46,18 @@ public class SpawnerConfirmMenu {
             Inventory inv = Bukkit.createInventory(null, 27, menuTitle);
 
             fillBorder(inv);
-            addConfirmButton(inv, true);
-            addConfirmButton(inv, false);
+            addDenyButton(inv);
+            addConfirmButton(inv);
             addExplanationPaper(inv);
             addSpawnerPreview(inv);
             addBackButton(inv);
 
             player.openInventory(inv);
+
+            MenuManager manager = MenuManager.getInstance(plugin);
+            if (manager != null) {
+                manager.registerTransactionMenu(player, null);
+            }
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error opening confirm menu", e);
             player.sendMessage(ChatColor.RED + "An error occurred!");
@@ -74,30 +79,34 @@ public class SpawnerConfirmMenu {
         }
     }
 
-    private void addConfirmButton(Inventory inv, boolean isConfirm) {
-        int slot = isConfirm ? 24 : 18;
-
-        Material material = isConfirm ? Material.GREEN_CONCRETE : Material.RED_CONCRETE;
-        ItemStack button = new ItemStack(material);
-        ItemMeta meta = button.getItemMeta();
-
+    private void addDenyButton(Inventory inv) {
+        ItemStack deny = new ItemStack(Material.RED_CONCRETE);
+        ItemMeta meta = deny.getItemMeta();
         if (meta != null) {
-            if (isConfirm) {
-                meta.setDisplayName(ChatColor.of("#55FF55") + "✔ CONFIRM");
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.of("#808080") + "Click to purchase this spawner");
-                meta.setLore(lore);
-            } else {
-                meta.setDisplayName(ChatColor.of("#FF5555") + "✖ DENY");
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.of("#808080") + "Click to cancel and go back");
-                meta.setLore(lore);
-            }
-            button.setItemMeta(meta);
+            meta.setDisplayName(ChatColor.of("#FF5555") + "✖ DENY");
+            List<String> lore = new ArrayList<>();
+            lore.add("");
+            lore.add(ChatColor.of("#808080") + "Click to cancel");
+            lore.add(ChatColor.of("#808080") + "and go back");
+            meta.setLore(lore);
+            deny.setItemMeta(meta);
         }
-        inv.setItem(slot, button);
+        inv.setItem(0, deny);
+    }
+
+    private void addConfirmButton(Inventory inv) {
+        ItemStack confirm = new ItemStack(Material.GREEN_CONCRETE);
+        ItemMeta meta = confirm.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(ChatColor.of("#55FF55") + "✔ CONFIRM");
+            List<String> lore = new ArrayList<>();
+            lore.add("");
+            lore.add(ChatColor.of("#808080") + "Click to purchase");
+            lore.add(ChatColor.of("#808080") + "this spawner");
+            meta.setLore(lore);
+            confirm.setItemMeta(meta);
+        }
+        inv.setItem(8, confirm);
     }
 
     private void addExplanationPaper(Inventory inv) {
@@ -135,7 +144,7 @@ public class SpawnerConfirmMenu {
             meta.setLore(lore);
             paper.setItemMeta(meta);
         }
-        inv.setItem(13, paper);
+        inv.setItem(4, paper);
     }
 
     private void addSpawnerPreview(Inventory inv) {
@@ -150,8 +159,7 @@ public class SpawnerConfirmMenu {
 
             List<String> lore = new ArrayList<>();
             lore.add("");
-            lore.add(ChatColor.of("#808080") + "This is a preview of the");
-            lore.add(ChatColor.of("#808080") + "spawner you will receive.");
+            lore.add(ChatColor.of("#808080") + "This is what you will receive:");
             lore.add("");
             lore.add(ChatColor.of("#808080") + "Spawns: " + ChatColor.of("#FFFFFF") + entityName);
             lore.add(ChatColor.of("#808080") + "Rate: " + ChatColor.of(tierColor) +
@@ -160,7 +168,7 @@ public class SpawnerConfirmMenu {
             meta.setLore(lore);
             spawner.setItemMeta(meta);
         }
-        inv.setItem(4, spawner);
+        inv.setItem(13, spawner);
     }
 
     private String getTierColor(ShopItem.SpawnerTier tier) {
@@ -174,13 +182,14 @@ public class SpawnerConfirmMenu {
     }
 
     private void addBackButton(Inventory inv) {
-        ItemStack back = new ItemStack(Material.SPYGLASS);
+        ItemStack back = new ItemStack(Material.BARRIER);
         ItemMeta meta = back.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ChatColor.of("#FFFF00") + "? Change Tier");
             List<String> lore = new ArrayList<>();
             lore.add("");
-            lore.add(ChatColor.of("#808080") + "Click to select a different tier");
+            lore.add(ChatColor.of("#808080") + "Click to select");
+            lore.add(ChatColor.of("#808080") + "a different tier");
             meta.setLore(lore);
             back.setItemMeta(meta);
         }
@@ -199,10 +208,7 @@ public class SpawnerConfirmMenu {
         } catch (Exception e) {
             plugin.getLogger().warning("Failed to get spawner price from config: " + e.getMessage());
         }
-
-        plugin.getLogger().severe("NO PRICE FOUND IN CONFIG for " + entityType + " " + tier +
-            " - Check Spawners.yml! Returning 0 to prevent sale.");
-        return 0;
+        return 100000;
     }
 
     public void handleClick(InventoryClickEvent event) {
@@ -222,14 +228,16 @@ public class SpawnerConfirmMenu {
 
         int slot = event.getSlot();
 
-        if (slot == 24) {
+        if (slot == 8) {
             performPurchase(player);
-        } else if (slot == 18) {
+        } else if (slot == 0) {
             playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 0.9f);
+            player.closeInventory();
             TierSelectionMenu tierMenu = new TierSelectionMenu(plugin, economy);
             tierMenu.open(player, entityType);
         } else if (slot == 26) {
             playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
+            player.closeInventory();
             TierSelectionMenu tierMenu = new TierSelectionMenu(plugin, economy);
             tierMenu.open(player, entityType);
         }
