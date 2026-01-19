@@ -21,8 +21,37 @@ else
     SERVER_NAME="DEV"
 fi
 
+# Restart behavior: by default do NOT restart MAIN server unless --restart passed
+FORCE_RESTART=false
+for arg in "$@"; do
+    if [ "$arg" == "--restart" ] || [ "$arg" == "-r" ]; then
+        FORCE_RESTART=true
+        break
+    fi
+done
+
+SKIP_RESTART=false
+if [ "$SERVER_NAME" == "MAIN" ] && [ "$FORCE_RESTART" == "false" ]; then
+    SKIP_RESTART=true
+    log_warning "Detected MAIN server. By default this script will NOT restart the server. Use --restart to force a restart."
+fi
+
 SERVER_DIR="/var/lib/pterodactyl/volumes/${CONTAINER_NAME}"
 PLUGINS_DIR="${SERVER_DIR}/plugins"
+
+ask_overwrite() {
+    local path="$1"
+    local question="$2"
+    if [ -e "$path" ]; then
+        read -p "$question [y/N]: " resp
+        if [[ "$resp" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+            return 0
+        else
+            return 1
+        fi
+    fi
+    return 0
+}
 # Attempt to find the latest built AuraSkills JAR automatically
 LATEST_JAR_FILE=$(ls -1 "${PROJECT_DIR}/bukkit/build/libs/"AuraSkills-*.jar 2>/dev/null | sort -V | tail -1)
 if [[ -z "$LATEST_JAR_FILE" ]]; then
@@ -141,45 +170,49 @@ get_container_status() {
 
 # Check if container is running
 if is_running; then
-    log_info "Container is running, initiating stop..."
-    
-    # Send stop signal
-    docker stop "$CONTAINER_NAME" >/dev/null 2>&1
-    
-    # Wait for container to stop with timeout
-    TIMEOUT=60
-    ELAPSED=0
-    
-    while [[ $ELAPSED -lt $TIMEOUT ]]; do
-        # Check if container stopped
-        if ! is_running; then
+    log_info "Container is running."
+    if [ "$SKIP_RESTART" == "true" ]; then
+        log_warning "Skipping stopping the container for MAIN server (use --restart to force). Proceeding to deploy while server is running."
+    else
+        log_info "Initiating stop..."
+        # Send stop signal
+        docker stop "$CONTAINER_NAME" >/dev/null 2>&1
+        
+        # Wait for container to stop with timeout
+        TIMEOUT=60
+        ELAPSED=0
+        
+        while [[ $ELAPSED -lt $TIMEOUT ]]; do
+            # Check if container stopped
+            if ! is_running; then
+                echo ""  # New line after progress
+                log_success "Container stopped gracefully (took ${ELAPSED}s)"
+                break
+            fi
+            
+            # Show progress every 3 seconds
+            if (( ELAPSED % 3 == 0 )); then
+                echo -ne "  ${CYAN}└─${NC} Waiting for graceful shutdown... ${ELAPSED}s / ${TIMEOUT}s\r"
+            fi
+            
+            sleep 1
+            ((ELAPSED++))
+        done
+        
+        # Force kill if still running after timeout
+        if is_running; then
             echo ""  # New line after progress
-            log_success "Container stopped gracefully (took ${ELAPSED}s)"
-            break
-        fi
-        
-        # Show progress every 3 seconds
-        if (( ELAPSED % 3 == 0 )); then
-            echo -ne "  ${CYAN}└─${NC} Waiting for graceful shutdown... ${ELAPSED}s / ${TIMEOUT}s\r"
-        fi
-        
-        sleep 1
-        ((ELAPSED++))
-    done
-    
-    # Force kill if still running after timeout
-    if is_running; then
-        echo ""  # New line after progress
-        log_warning "Graceful shutdown timeout (${TIMEOUT}s), forcing stop..."
-        docker kill "$CONTAINER_NAME" >/dev/null 2>&1
-        sleep 3
-        
-        # Final check
-        if ! is_running; then
-            log_success "Container force stopped"
-        else
-            log_error "Failed to stop container!"
-            exit 1
+            log_warning "Graceful shutdown timeout (${TIMEOUT}s), forcing stop..."
+            docker kill "$CONTAINER_NAME" >/dev/null 2>&1
+            sleep 3
+            
+            # Final check
+            if ! is_running; then
+                log_success "Container force stopped"
+            else
+                log_error "Failed to stop container!"
+                exit 1
+            fi
         fi
     fi
 else
