@@ -190,6 +190,7 @@ public class MenuManager implements Listener {
             if (handleMainMenu(playerId, title, event)) return;
             if (handleSellMenu(playerId, title, event)) return;
             if (handleTierMenu(playerId, title, event)) return;
+            if (handleConfirmMenu(playerId, title, event)) return;
 
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Unexpected error in menu click handler", e);
@@ -446,6 +447,30 @@ public class MenuManager implements Listener {
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error closing tier menu", e);
             tierMenus.remove(playerId);
+        }
+    }
+
+    private boolean handleConfirmMenu(UUID playerId, String title, InventoryClickEvent event) {
+        try {
+            SpawnerConfirmMenu menu = SpawnerConfirmMenu.getActiveMenu(playerId);
+            if (menu != null && menu.isMenuTitle(title)) {
+                menu.handleClick(event);
+                return true;
+            }
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.SEVERE, "Error in confirm menu click", e);
+        }
+        return false;
+    }
+
+    private void handleConfirmClose(UUID playerId, String title, InventoryCloseEvent event) {
+        try {
+            SpawnerConfirmMenu menu = SpawnerConfirmMenu.getActiveMenu(playerId);
+            if (menu != null && menu.isMenuTitle(title)) {
+                menu.handleClose(event);
+            }
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.WARNING, "Error closing confirm menu", e);
         }
     }
 }

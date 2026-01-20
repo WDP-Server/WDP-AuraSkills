@@ -1,0 +1,161 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                        TOOLS SHOP - BALANCED ECONOMY V2                       ║
+# ╠══════════════════════════════════════════════════════════════════════════════╣
+# ║ Pricing Philosophy:                                                           ║
+# ║ - Pickaxes: Primary income tool, priced by efficiency + durability            ║
+# ║ - Axes: Dual combat/foraging use, slightly higher than pure tools             ║
+# ║ - Shovels/Hoes: Utility tools, lower prices since less versatile              ║
+# ║ - Fortune III pick: Huge investment that pays for itself over time            ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+pages:
+  page1:
+    items:
+      # ═══════ PICKAXES ═══════
+      # Primary income tool - worth investing in
+      '1':
+        material: WOODEN_PICKAXE
+        buy: 5
+        sell: 1
+      '2':
+        material: STONE_PICKAXE
+        buy: 8
+        sell: 2
+      '3':
+        material: IRON_PICKAXE
+        buy: 30
+        sell: 9
+      '4':
+        material: GOLDEN_PICKAXE
+        buy: 55
+        sell: 16
+      '5':
+        material: DIAMOND_PICKAXE
+        buy: 140
+        sell: 42
+      '6':
+        material: NETHERITE_PICKAXE
+        buy: 480
+        sell: 144
+      
+      # ═══════ AXES ═══════
+      # Foraging + Combat dual use
+      '7':
+        material: WOODEN_AXE
+        buy: 5
+        sell: 1
+      '8':
+        material: STONE_AXE
+        buy: 8
+        sell: 2
+      '9':
+        material: IRON_AXE
+        buy: 35
+        sell: 10
+      '10':
+        material: GOLDEN_AXE
+        buy: 60
+        sell: 18
+      '11':
+        material: DIAMOND_AXE
+        buy: 160
+        sell: 48
+      '12':
+        material: NETHERITE_AXE
+        buy: 520
+        sell: 156
+      
+      # ═══════ SHOVELS ═══════
+      # Excavation skill - utility focus
+      '13':
+        material: WOODEN_SHOVEL
+        buy: 3
+        sell: 0
+      '14':
+        material: STONE_SHOVEL
+        buy: 5
+        sell: 1
+      '15':
+        material: IRON_SHOVEL
+        buy: 20
+        sell: 6
+      '16':
+        material: GOLDEN_SHOVEL
+        buy: 40
+        sell: 12
+      '17':
+        material: DIAMOND_SHOVEL
+        buy: 100
+        sell: 30
+      '18':
+        material: NETHERITE_SHOVEL
+        buy: 380
+        sell: 114
+      
+      # ═══════ HOES ═══════
+      # Farming focus - important for farming skill
+      '19':
+        material: WOODEN_HOE
+        buy: 3
+        sell: 0
+      '20':
+        material: STONE_HOE
+        buy: 5
+        sell: 1
+      '21':
+        material: IRON_HOE
+        buy: 18
+        sell: 5
+      '22':
+        material: GOLDEN_HOE
+        buy: 35
+        sell: 10
+      '23':
+        material: DIAMOND_HOE
+        buy: 90
+        sell: 27
+      '24':
+        material: NETHERITE_HOE
+        buy: 350
+        sell: 105
+      
+      # ═══════ UTILITY TOOLS ═══════
+      '25':
+        material: SHEARS
+        buy: 15
+        sell: 4
+      '26':
+        material: FLINT_AND_STEEL
+        buy: 12
+        sell: 3
+      '27':
+        material: FISHING_ROD
+        buy: 20
+        sell: 6
+      '28':
+        material: CARROT_ON_A_STICK
+        buy: 25
+        sell: 7
+      '29':
+        material: WARPED_FUNGUS_ON_A_STICK
+        buy: 35
+        sell: 10
+      '30':
+        material: LEAD
+        buy: 8
+        sell: 2
+      '31':
+        material: NAME_TAG
+        buy: 25
+        sell: 7
+      '32':
+        material: SPYGLASS
+        buy: 40
+        sell: 12
+      '33':
+        material: BRUSH
+        buy: 30
+        sell: 9
+      '34':
+        material: COMPASS
+        buy: 20
+        sell: 6

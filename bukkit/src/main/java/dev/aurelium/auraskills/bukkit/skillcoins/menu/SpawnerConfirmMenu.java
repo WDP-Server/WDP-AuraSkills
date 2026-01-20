@@ -20,24 +20,27 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class SpawnerConfirmMenu {
 
     private final AuraSkills plugin;
     private final EconomyProvider economy;
+    private final SharedNavbarManager navbarManager;
     private final EntityType entityType;
     private final ShopItem.SpawnerTier tier;
     private final String menuTitle = ChatColor.of("#FFD700") + "Confirm Purchase";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0");
-    private static final int MENU_SIZE = 45;
-    private static final int[] NAVBAR_SLOTS = {36, 37, 38, 39, 40, 41, 42, 43, 44};
+    private static final int MENU_SIZE = 54;
+    private static final ConcurrentHashMap<UUID, SpawnerConfirmMenu> activeMenus = new ConcurrentHashMap<>();
 
     public SpawnerConfirmMenu(AuraSkills plugin, EconomyProvider economy, EntityType entityType, ShopItem.SpawnerTier tier) {
         this.plugin = plugin;
         this.economy = economy;
         this.entityType = entityType;
         this.tier = tier;
+        this.navbarManager = new SharedNavbarManager(plugin, economy);
     }
 
     public void open(Player player) {
@@ -51,15 +54,13 @@ public class SpawnerConfirmMenu {
             addConfirmButton(inv);
             addExplanationPaper(inv);
             addSpawnerPreview(inv);
-            addBackButton(inv);
-            addNavbar(inv);
+
+            navbarManager.addNavbar(inv, "spawner_confirm", 0, 0, player);
 
             player.openInventory(inv);
 
-            MenuManager manager = MenuManager.getInstance(plugin);
-            if (manager != null) {
-                manager.registerTransactionMenu(player, null);
-            }
+            activeMenus.put(player.getUniqueId(), this);
+
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error opening confirm menu", e);
             player.sendMessage(ChatColor.RED + "An error occurred!");
@@ -74,11 +75,8 @@ public class SpawnerConfirmMenu {
             border.setItemMeta(meta);
         }
 
-        for (int i = 0; i < MENU_SIZE; i++) {
-            boolean isNavbarArea = i >= 36 && i <= 44;
-            if (!isNavbarArea && (i < 9 || i >= 27 || (i > 6 && i < 36))) {
-                inv.setItem(i, border);
-            }
+        for (int i = 0; i < 36; i++) {
+            inv.setItem(i, border);
         }
     }
 
@@ -94,7 +92,7 @@ public class SpawnerConfirmMenu {
             meta.setLore(lore);
             deny.setItemMeta(meta);
         }
-        inv.setItem(2, deny);
+        inv.setItem(11, deny);
     }
 
     private void addConfirmButton(Inventory inv) {
@@ -109,7 +107,7 @@ public class SpawnerConfirmMenu {
             meta.setLore(lore);
             confirm.setItemMeta(meta);
         }
-        inv.setItem(6, confirm);
+        inv.setItem(15, confirm);
     }
 
     private void addExplanationPaper(Inventory inv) {
@@ -147,7 +145,7 @@ public class SpawnerConfirmMenu {
             meta.setLore(lore);
             paper.setItemMeta(meta);
         }
-        inv.setItem(4, paper);
+        inv.setItem(13, paper);
     }
 
     private void addSpawnerPreview(Inventory inv) {
@@ -171,7 +169,7 @@ public class SpawnerConfirmMenu {
             meta.setLore(lore);
             spawner.setItemMeta(meta);
         }
-        inv.setItem(13, spawner);
+        inv.setItem(22, spawner);
     }
 
     private String getTierColor(ShopItem.SpawnerTier tier) {
@@ -182,52 +180,6 @@ public class SpawnerConfirmMenu {
             case OMEGA: return "#FF5555";
             default: return "#FFFFFF";
         }
-    }
-
-    private void addBackButton(Inventory inv) {
-        ItemStack back = new ItemStack(Material.BARRIER);
-        ItemMeta meta = back.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(ChatColor.of("#FFFF00") + "? Change Tier");
-            List<String> lore = new ArrayList<>();
-            lore.add("");
-            lore.add(ChatColor.of("#808080") + "Click to select");
-            lore.add(ChatColor.of("#808080") + "a different tier");
-            meta.setLore(lore);
-            back.setItemMeta(meta);
-        }
-        inv.setItem(26, back);
-    }
-
-    private void addNavbar(Inventory inv) {
-        ItemStack back = new ItemStack(Material.SPYGLASS);
-        ItemMeta backMeta = back.getItemMeta();
-        if (backMeta != null) {
-            backMeta.setDisplayName(ChatColor.RED + "← Back to Shop");
-            back.setItemMeta(backMeta);
-        }
-        inv.setItem(36, back);
-
-        ItemStack pageInfo = new ItemStack(Material.PAPER);
-        ItemMeta pageMeta = pageInfo.getItemMeta();
-        if (pageMeta != null) {
-            pageMeta.setDisplayName(ChatColor.of("#FFD700") + "Confirm Purchase");
-            List<String> lore = new ArrayList<>();
-            lore.add("");
-            lore.add(ChatColor.of("#808080") + "Review your purchase");
-            lore.add(ChatColor.of("#808080") + "before confirming");
-            pageMeta.setLore(lore);
-            pageInfo.setItemMeta(pageMeta);
-        }
-        inv.setItem(40, pageInfo);
-
-        ItemStack home = new ItemStack(Material.BOOK);
-        ItemMeta homeMeta = home.getItemMeta();
-        if (homeMeta != null) {
-            homeMeta.setDisplayName(ChatColor.of("#00FFFF") + "✦ Main Menu");
-            home.setItemMeta(homeMeta);
-        }
-        inv.setItem(44, home);
     }
 
     private double getPriceFromConfig() {
@@ -262,33 +214,31 @@ public class SpawnerConfirmMenu {
 
         int slot = event.getSlot();
 
-        if (slot == 6) {
+        if (slot == 15) {
             performPurchase(player);
-        } else if (slot == 2) {
+        } else if (slot == 11) {
             playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 0.9f);
             player.closeInventory();
+            activeMenus.remove(player.getUniqueId());
             TierSelectionMenu tierMenu = new TierSelectionMenu(plugin, economy);
             tierMenu.open(player, entityType);
-        } else if (slot == 26) {
-            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
+        } else if (slot == 53) {
+            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 0.9f);
             player.closeInventory();
+            activeMenus.remove(player.getUniqueId());
             TierSelectionMenu tierMenu = new TierSelectionMenu(plugin, economy);
             tierMenu.open(player, entityType);
-        } else if (slot == 36) {
-            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
-            player.closeInventory();
-            MenuManager manager = MenuManager.getInstance(plugin);
-            if (manager != null) {
-                manager.openMainMenu(player);
-            }
-        } else if (slot == 44) {
-            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
-            player.closeInventory();
-            MenuManager manager = MenuManager.getInstance(plugin);
-            if (manager != null) {
-                manager.openMainMenu(player);
-            }
         }
+    }
+
+    public void handleClose(InventoryCloseEvent event) {
+        if (event != null && event.getPlayer() instanceof Player) {
+            activeMenus.remove(((Player) event.getPlayer()).getUniqueId());
+        }
+    }
+
+    public boolean isMenuTitle(String title) {
+        return title != null && title.equals(menuTitle);
     }
 
     private void performPurchase(Player player) {
@@ -336,6 +286,7 @@ public class SpawnerConfirmMenu {
 
             playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.5f);
             player.closeInventory();
+            activeMenus.remove(player.getUniqueId());
 
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Purchase failed", e);
@@ -360,10 +311,7 @@ public class SpawnerConfirmMenu {
         } catch (Exception ignored) {}
     }
 
-    public void handleClose(InventoryCloseEvent event) {
-    }
-
-    public boolean isMenuTitle(String title) {
-        return title != null && title.equals(menuTitle);
+    public static SpawnerConfirmMenu getActiveMenu(UUID playerId) {
+        return activeMenus.get(playerId);
     }
 }

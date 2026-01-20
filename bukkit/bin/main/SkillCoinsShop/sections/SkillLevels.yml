@@ -1,0 +1,14 @@
+enable: true
+slot: 52
+title: ''
+hidden: false
+sub-section: false
+display-item: false
+fill-item:
+  material: AIR
+nav-bar:
+  mode: INHERIT
+item:
+  material: EXPERIENCE_BOTTLE
+  displayname: '&e✪ Skill Levels'
+  name: '&e✪ Skill Levels'

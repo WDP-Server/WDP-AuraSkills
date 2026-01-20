@@ -144,6 +144,28 @@ public class ShopLoader {
         }
     }
 
+    private static final java.util.Map<String, String> ENCHANTMENT_ALIASES = new java.util.HashMap<>();
+    static {
+        // Aliases from config keys to Minecraft enchantment key names
+        ENCHANTMENT_ALIASES.put("WATER_WORKER", "aqua_affinity");
+        ENCHANTMENT_ALIASES.put("DAMAGE_ARTHROPODS", "bane_of_arthropods");
+        ENCHANTMENT_ALIASES.put("PROTECTION_EXPLOSIONS", "blast_protection");
+        ENCHANTMENT_ALIASES.put("DIG_SPEED", "efficiency");
+        ENCHANTMENT_ALIASES.put("PROTECTION_FALL", "feather_falling");
+        ENCHANTMENT_ALIASES.put("PROTECTION_FIRE", "fire_protection");
+        ENCHANTMENT_ALIASES.put("ARROW_FIRE", "flame");
+        ENCHANTMENT_ALIASES.put("LOOT_BONUS_BLOCKS", "fortune");
+        ENCHANTMENT_ALIASES.put("ARROW_INFINITE", "infinity");
+        ENCHANTMENT_ALIASES.put("LOOT_BONUS_MOBS", "looting");
+        ENCHANTMENT_ALIASES.put("LUCK", "luck_of_the_sea");
+        ENCHANTMENT_ALIASES.put("ARROW_DAMAGE", "power");
+        ENCHANTMENT_ALIASES.put("PROTECTION_PROJECTILE", "projectile_protection");
+        ENCHANTMENT_ALIASES.put("PROTECTION_ENVIRONMENTAL", "protection");
+        ENCHANTMENT_ALIASES.put("ARROW_KNOCKBACK", "punch");
+        ENCHANTMENT_ALIASES.put("OXYGEN", "respiration");
+        ENCHANTMENT_ALIASES.put("DAMAGE_ALL", "sharpness");
+    }
+
     private ShopItem loadShopItem(ConfigurationSection section) {
         if (section == null) return null;
 
@@ -188,7 +210,21 @@ public class ShopLoader {
                         String enchantName = parts[0].trim();
                         int level = Integer.parseInt(parts[1].trim());
 
+                        // Try direct namespaced lookup first
                         Enchantment enchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchantName.toLowerCase()));
+                        if (enchant == null) {
+                            // Try alias map for legacy/alternative names
+                            String alias = ENCHANTMENT_ALIASES.get(enchantName.toUpperCase());
+                            if (alias != null) {
+                                enchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(alias));
+                            }
+                        }
+                        if (enchant == null) {
+                            // Try simple normalization (spaces/dashes -> underscores)
+                            String normalized = enchantName.toLowerCase().replace(' ', '_').replace('-', '_');
+                            enchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(normalized));
+                        }
+
                         if (enchant != null) {
                             enchantments.put(enchant, level);
                         } else {

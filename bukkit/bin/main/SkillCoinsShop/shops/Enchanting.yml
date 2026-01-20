@@ -1,10 +1,3 @@
-# ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                    ENCHANTMENTS SHOP - EXACT PRICES                           ║
-# ╠══════════════════════════════════════════════════════════════════════════════╣
-# ║ ALL ITEMS PURCHASABLE WITH COINS ONLY!                                        ║
-# ║ Prices are EXACT as specified - DO NOT ROUND!                                 ║
-# ╚══════════════════════════════════════════════════════════════════════════════╝
-
 pages:
   page1:
     items:
@@ -256,7 +249,7 @@ pages:
         - VANISHING_CURSE:1
       '42':
         material: ENCHANTED_BOOK
-        buy: 20255
+        buy: 20255.0
         sell: 6063.75
         enchantments:
         - WIND_BURST:3
@@ -266,3 +259,4 @@ pages:
         sell: 100
         enchantments:
         - VEINMINE:1
+

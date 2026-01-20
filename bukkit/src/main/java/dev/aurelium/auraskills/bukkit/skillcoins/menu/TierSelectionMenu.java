@@ -24,17 +24,19 @@ public class TierSelectionMenu {
 
     private final AuraSkills plugin;
     private final EconomyProvider economy;
+    private final SharedNavbarManager navbarManager;
     private final String menuTitle = ChatColor.of("#90EE90") + "Select Tier";
     private static final ConcurrentHashMap<UUID, EntityType> playerSelections = new ConcurrentHashMap<>();
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0");
 
     private final Map<ShopItem.SpawnerTier, Material> tierMaterials = new EnumMap<>(ShopItem.SpawnerTier.class);
     private final Map<ShopItem.SpawnerTier, String> tierColors = new EnumMap<>(ShopItem.SpawnerTier.class);
-    private final int[] tierSlots = {11, 13, 15, 17};
+    private final int[] tierSlots = {19, 21, 23, 25};
 
     public TierSelectionMenu(AuraSkills plugin, EconomyProvider economy) {
         this.plugin = plugin;
         this.economy = economy;
+        this.navbarManager = new SharedNavbarManager(plugin, economy);
 
         tierMaterials.put(ShopItem.SpawnerTier.BASIC, Material.SKELETON_SKULL);
         tierMaterials.put(ShopItem.SpawnerTier.ENHANCED, Material.BLAZE_POWDER);
@@ -53,12 +55,13 @@ public class TierSelectionMenu {
         playerSelections.put(player.getUniqueId(), entityType);
 
         try {
-            Inventory inv = Bukkit.createInventory(null, 36, menuTitle);
+            Inventory inv = Bukkit.createInventory(null, 54, menuTitle);
 
             fillBorder(inv);
             addEntityDisplay(inv, entityType);
             addTierButtons(inv, entityType);
-            addBackButton(inv);
+
+            navbarManager.addNavbar(inv, "spawner_tier_select", 0, 0, player);
 
             player.openInventory(inv);
 
@@ -81,9 +84,7 @@ public class TierSelectionMenu {
         }
 
         for (int i = 0; i < 36; i++) {
-            if (i < 9 || i >= 27) {
-                inv.setItem(i, border);
-            }
+            inv.setItem(i, border);
         }
     }
 
@@ -165,14 +166,10 @@ public class TierSelectionMenu {
         return 0;
     }
 
-    private void addBackButton(Inventory inv) {
-        ItemStack back = new ItemStack(Material.BARRIER);
-        ItemMeta meta = back.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(ChatColor.RED + "← Back");
-            back.setItemMeta(meta);
-        }
-        inv.setItem(27, back);
+    private void openConfirmMenu(Player player, EntityType entityType, ShopItem.SpawnerTier tier) {
+        player.closeInventory();
+        SpawnerConfirmMenu confirmMenu = new SpawnerConfirmMenu(plugin, economy, entityType, tier);
+        confirmMenu.open(player);
     }
 
     public void handleClick(InventoryClickEvent event) {
@@ -198,16 +195,6 @@ public class TierSelectionMenu {
             return;
         }
 
-        if (slot == 27) {
-            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 0.9f);
-            player.closeInventory();
-            MenuManager manager = MenuManager.getInstance(plugin);
-            if (manager != null) {
-                manager.openMainMenu(player);
-            }
-            return;
-        }
-
         for (int i = 0; i < tierSlots.length; i++) {
             if (slot == tierSlots[i]) {
                 ShopItem.SpawnerTier tier = ShopItem.SpawnerTier.values()[i];
@@ -216,12 +203,6 @@ public class TierSelectionMenu {
                 return;
             }
         }
-    }
-
-    private void openConfirmMenu(Player player, EntityType entityType, ShopItem.SpawnerTier tier) {
-        player.closeInventory();
-        SpawnerConfirmMenu confirmMenu = new SpawnerConfirmMenu(plugin, economy, entityType, tier);
-        confirmMenu.open(player);
     }
 
     private void playSound(Player player, Sound sound, float volume, float pitch) {

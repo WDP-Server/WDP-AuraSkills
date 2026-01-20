@@ -305,31 +305,43 @@ public class ShopSectionMenu {
             if (meta != null) {
                 List<String> lore = new ArrayList<>();
                 lore.add("");
-                
+
+                if (shopItem.isSpawner()) {
+                    ShopItem.SpawnerTier tier = shopItem.getSpawnerTier();
+                    if (tier != null) {
+                        String tierColor = getTierColor(tier);
+                        String tierPrefix = tier.getPrefix();
+                        lore.add(ChatColor.of(tierColor) + tierPrefix + tier.name() + " Tier");
+                        lore.add(ChatColor.of("#808080") + "Spawn Rate: " + ChatColor.of(tierColor) +
+                            String.format("%.1fx", tier.getSpawnRateMultiplier()));
+                        lore.add("");
+                    }
+                }
+
                 // Buy info
                 if (shopItem.canBuy()) {
                     double buyPrice = shopItem.getBuyPrice();
-                    lore.add(ChatColor.of("#55FF55") + "● Buy: " + ChatColor.of("#FFFFFF") + 
+                    lore.add(ChatColor.of("#55FF55") + "● Buy: " + ChatColor.of("#FFFFFF") +
                             MONEY_FORMAT.format(buyPrice) + ChatColor.of("#FFFF00") + " Coins");
-                    lore.add(ChatColor.of("#808080") + "  └ " + ChatColor.of("#FFFF00") + "Left Click" + 
+                    lore.add(ChatColor.of("#808080") + "  └ " + ChatColor.of("#FFFF00") + "Left Click" +
                             ChatColor.of("#808080") + " to purchase");
                 } else {
                     lore.add(ChatColor.of("#FF5555") + "✖ Cannot buy");
                 }
-                
+
                 lore.add("");
-                
+
                 // Sell info
                 if (shopItem.canSell()) {
                     double sellPrice = shopItem.getSellPrice();
-                    lore.add(ChatColor.of("#FFD700") + "● Sell: " + ChatColor.of("#FFFFFF") + 
+                    lore.add(ChatColor.of("#FFD700") + "● Sell: " + ChatColor.of("#FFFFFF") +
                             MONEY_FORMAT.format(sellPrice) + ChatColor.of("#FFFF00") + " Coins");
-                    lore.add(ChatColor.of("#808080") + "  └ " + ChatColor.of("#FFFF00") + "Right Click" + 
+                    lore.add(ChatColor.of("#808080") + "  └ " + ChatColor.of("#FFFF00") + "Right Click" +
                             ChatColor.of("#808080") + " to sell");
                 } else {
                     lore.add(ChatColor.of("#FF5555") + "✖ Cannot sell");
                 }
-                
+
                 meta.setLore(lore);
                 display.setItemMeta(meta);
             }
@@ -514,6 +526,16 @@ public class ShopSectionMenu {
             }, 1L);
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error handling section menu close", e);
+        }
+    }
+
+    private String getTierColor(ShopItem.SpawnerTier tier) {
+        switch (tier) {
+            case BASIC: return "#AAAAAA";
+            case ENHANCED: return "#55FF55";
+            case HYPER: return "#FFAA00";
+            case OMEGA: return "#FF5555";
+            default: return "#FFFFFF";
         }
     }
 }

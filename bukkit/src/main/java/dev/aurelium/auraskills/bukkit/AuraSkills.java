@@ -545,6 +545,7 @@ public class AuraSkills extends JavaPlugin implements AuraSkillsPlugin {
         pm.registerEvents(new MobLootHandler(this), this);
         pm.registerEvents(new RequirementListener(this), this);
         pm.registerEvents(new ItemListener(this), this);
+        pm.registerEvents(new dev.aurelium.auraskills.bukkit.skillcoins.listeners.CustomSpawnerListener(this), this);
         pm.registerEvents(new ArmorListener(configStringList(Option.MODIFIER_ARMOR_EQUIP_BLOCKED_MATERIALS)), this);
         pm.registerEvents(new ArmorModifierListener(this), this);
         pm.registerEvents(new RegionListener(this), this);

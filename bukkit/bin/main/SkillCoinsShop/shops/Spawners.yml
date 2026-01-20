@@ -1,0 +1,252 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                    AURASKILLS SPAWNER SHOP - TIER SYSTEM                      ║
+# ╠══════════════════════════════════════════════════════════════════════════════╣
+# ║ FEATURES:                                                                    ║
+# ║ - Individual spawners with fair economy pricing                              ║
+# ║ - Tier System: BASIC → ENHANCED → HYPER → OMEGA (1x, 1.5x, 2x, 3x spawn!)   ║
+# ║ - Smart sell-back: Get 50% of value when you resell                          ║
+# ║ - All prices configurable in this file - NO hardcoded values!                ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+pages:
+  page1:
+    items:
+      # ═══════ COMMON SPAWNERS (Utility/Farm) ═══════
+      '0':
+        material: SPAWNER
+        spawnertype: SKELETON
+        spawnertier: BASIC
+        buy: 50000
+        sell: 25000
+      '1':
+        material: SPAWNER
+        spawnertype: ZOMBIE
+        spawnertier: BASIC
+        buy: 50000
+        sell: 25000
+      '2':
+        material: SPAWNER
+        spawnertype: SPIDER
+        spawnertier: BASIC
+        buy: 45000
+        sell: 22500
+      '3':
+        material: SPAWNER
+        spawnertype: CAVE_SPIDER
+        spawnertier: BASIC
+        buy: 60000
+        sell: 30000
+      '4':
+        material: SPAWNER
+        spawnertype: CREEPER
+        spawnertier: BASIC
+        buy: 75000
+        sell: 37500
+      '5':
+        material: SPAWNER
+        spawnertype: WITCH
+        spawnertier: BASIC
+        buy: 150000
+        sell: 75000
+      '6':
+        material: SPAWNER
+        spawnertype: COW
+        spawnertier: BASIC
+        buy: 75000
+        sell: 37500
+      '7':
+        material: SPAWNER
+        spawnertype: PIG
+        spawnertier: BASIC
+        buy: 50000
+        sell: 25000
+      '8':
+        material: SPAWNER
+        spawnertype: SHEEP
+        spawnertier: BASIC
+        buy: 45000
+        sell: 22500
+      '9':
+        material: SPAWNER
+        spawnertype: CHICKEN
+        spawnertier: BASIC
+        buy: 35000
+        sell: 17500
+      '10':
+        material: SPAWNER
+        spawnertype: RABBIT
+        spawnertier: BASIC
+        buy: 45000
+        sell: 22500
+
+      # ═══════ UNCOMMON SPAWNERS ═══════
+      '11':
+        material: SPAWNER
+        spawnertype: ENDERMAN
+        spawnertier: BASIC
+        buy: 175000
+        sell: 87500
+      '12':
+        material: SPAWNER
+        spawnertype: SHULKER
+        spawnertier: BASIC
+        buy: 200000
+        sell: 100000
+      '13':
+        material: SPAWNER
+        spawnertype: PHANTOM
+        spawnertier: BASIC
+        buy: 150000
+        sell: 75000
+      '14':
+        material: SPAWNER
+        spawnertype: IRON_GOLEM
+        spawnertier: BASIC
+        buy: 300000
+        sell: 150000
+      '15':
+        material: SPAWNER
+        spawnertype: PIGLIN_BRUTE
+        spawnertier: BASIC
+        buy: 500000
+        sell: 250000
+      '16':
+        material: SPAWNER
+        spawnertype: SQUID
+        spawnertier: BASIC
+        buy: 100000
+        sell: 50000
+      '17':
+        material: SPAWNER
+        spawnertype: GLOW_SQUID
+        spawnertier: BASIC
+        buy: 150000
+        sell: 75000
+      '18':
+        material: SPAWNER
+        spawnertype: SLIME
+        spawnertier: BASIC
+        buy: 200000
+        sell: 100000
+
+      # ═══════ RARE SPAWNERS ═══════
+      '19':
+        material: SPAWNER
+        spawnertype: WOLF
+        spawnertier: BASIC
+        buy: 125000
+        sell: 62500
+      '20':
+        material: SPAWNER
+        spawnertype: CAT
+        spawnertier: BASIC
+        buy: 40000
+        sell: 20000
+      '21':
+        material: SPAWNER
+        spawnertype: PARROT
+        spawnertier: BASIC
+        buy: 45000
+        sell: 22500
+      '22':
+        material: SPAWNER
+        spawnertype: BEE
+        spawnertier: BASIC
+        buy: 75000
+        sell: 37500
+      '23':
+        material: SPAWNER
+        spawnertype: SNOWMAN
+        spawnertier: BASIC
+        buy: 50000
+        sell: 25000
+      '24':
+        material: SPAWNER
+        spawnertype: MUSHROOM_COW
+        spawnertier: BASIC
+        buy: 125000
+        sell: 62500
+      '25':
+        material: SPAWNER
+        spawnertype: AXOLOTL
+        spawnertier: BASIC
+        buy: 150000
+        sell: 75000
+      '26':
+        material: SPAWNER
+        spawnertype: ALLAY
+        spawnertier: BASIC
+        buy: 250000
+        sell: 125000
+      '27':
+        material: SPAWNER
+        spawnertype: FROG
+        spawnertier: BASIC
+        buy: 175000
+        sell: 87500
+      '28':
+        material: SPAWNER
+        spawnertype: SNIFFER
+        spawnertier: BASIC
+        buy: 200000
+        sell: 100000
+
+      # ═══════ ENHANCED SPAWNERS (1.5x Spawn Rate - 3x Price) ═══════
+      '29':
+        material: SPAWNER
+        spawnertype: SKELETON
+        spawnertier: ENHANCED
+        buy: 150000
+        sell: 75000
+      '30':
+        material: SPAWNER
+        spawnertype: ZOMBIE
+        spawnertier: ENHANCED
+        buy: 150000
+        sell: 75000
+      '31':
+        material: SPAWNER
+        spawnertype: CREEPER
+        spawnertier: ENHANCED
+        buy: 225000
+        sell: 112500
+      '32':
+        material: SPAWNER
+        spawnertype: BLAZE
+        spawnertier: ENHANCED
+        buy: 375000
+        sell: 187500
+
+      # ═══════ HYPER SPAWNERS (2x Spawn Rate - 6x Price) ═══════
+      '33':
+        material: SPAWNER
+        spawnertype: SKELETON
+        spawnertier: HYPER
+        buy: 300000
+        sell: 150000
+      '34':
+        material: SPAWNER
+        spawnertype: ZOMBIE
+        spawnertier: HYPER
+        buy: 300000
+        sell: 150000
+      '35':
+        material: SPAWNER
+        spawnertype: MAGMA_CUBE
+        spawnertier: HYPER
+        buy: 600000
+        sell: 300000
+
+      # ═══════ OMEGA SPAWNERS (3x Spawn Rate - 12x Price) ═══════
+      '36':
+        material: SPAWNER
+        spawnertype: SKELETON
+        spawnertier: OMEGA
+        buy: 600000
+        sell: 300000
+      '37':
+        material: SPAWNER
+        spawnertype: BLAZE
+        spawnertier: OMEGA
+        buy: 1500000
+        sell: 750000
